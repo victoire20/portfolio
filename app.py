@@ -12,11 +12,11 @@ profile_pic = current_dir / "assets" / "profile-pic.png"
 
 
 # --- GENERAL SETTINGS ---
-PAGE_TITLE = "Digital CV | John Doe"
+PAGE_TITLE = "Digital CV | Yaba Louo Jean de Dieu"
 PAGE_ICON = ":wave:"
-NAME = "John Doe"
+NAME = "Yaba Louo Jean de Dieu"
 DESCRIPTION = """
-Senior Data Analyst, assisting enterprises by supporting data-driven decision-marketing
+Web Developper, assisting enterprises by make digital solution to grow here enterprise
 """
 EMAIL = "gauisyaba@gmail.com"
 SOCIAL_MEDIA = {
@@ -30,6 +30,11 @@ PROJECTS = {
     "🏆 Income and Expense Tracker - web app with NoSQL database": "https://youtu.be/ddfdfsd",
     "🏆 Desktop Application - Excel2CSV converter with user settings & menubar": "https://youtu.be/dffdfds",
     "🏆 MyToolBelt - Custom MS Excel add-in to combine Python & Excel": "https://youtu.be/dfdsfds",
+}
+ACADEMIC_PARCOURS = {
+    "💼 **Technician Brevet | BTS | 2019-2020**": "",
+    "💼 **Certification of CyberSecurity | CSCU | 2018-2019**": "",
+    "💼 **Baccalaurea | BAC | 2017-2018**": "",
 }
 
 st.set_page_config(page_title=PAGE_TITLE, page_icon=PAGE_ICON)
@@ -87,6 +92,20 @@ st.write(
 - 📊 Data visualization: PowerBi, MS, Excel, Plotly
 - 📚 Modeling: Logistic regression, linear regression, detection trees
 - 🛢️ Databases: Postgres, MongoDB, MySQL
+"""
+)
+
+
+# --- Academic Parcours ---
+st.write("#")
+st.subheader("Academic Parcours")
+# for parc, link in ACADEMIC_PARCOURS.items():
+#     st.write(f"[{parc}]({link})")
+st.write(
+    """
+- 💼 **Technician Brevet | BTS | 2019-2020**
+- 💼 **Certification of CyberSecurity | CSCU | 2018-2019**
+- 💼 **Baccalaurea | BAC | 2017-2018**
 """
 )
 
