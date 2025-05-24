@@ -24,6 +24,19 @@ hr {
     margin-bottom: 5% !important;
 }
 
+.st-emotion-cache-1t3mybo h1,
+.st-emotion-cache-1t3mybo h2,
+.st-emotion-cache-1t3mybo h3,
+.st-emotion-cache-1t3mybo h4,
+.st-emotion-cache-1t3mybo h5,
+.st-emotion-cache-1t3mybo h6 {
+    padding: 0px !important;
+}
+
+#yaba-louo-jean-de-dieu {
+    margin-bottom: 10px;
+}
+
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 header {visibility: hidden;}
