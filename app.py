@@ -12,9 +12,9 @@ profile_pic = current_dir / "assets" / "profile-pic.png"
 
 
 # --- GENERAL SETTINGS ---
-PAGE_TITLE = "Digital CV | Yaba Louo Jean de Dieu"
+PAGE_TITLE = "Digital CV | YABA LOUO JEAN DE DIEU"
 PAGE_ICON = ":wave:"
-NAME = "Yaba Louo Jean de Dieu"
+NAME = "YABA LOUO JEAN DE DIEU"
 DESCRIPTION = """
 A web developer with 4 years' experience, I started with PHP and its Laravel framework before 
 turning to the Python ecosystem. Today, I work mainly with the FastAPI and Django frameworks to design 
