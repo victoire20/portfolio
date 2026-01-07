@@ -13,7 +13,6 @@ of my professional journey.
 
 ### Tools Used 
 - **Languages:**  
-  - Python  
-- **Packages:**  
-  - Streamlit  
-  - Pillow
+  - Vanilla JS  
+  - HTML
+  - CSS
