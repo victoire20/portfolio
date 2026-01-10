@@ -1,6 +1,5 @@
 :root {
     --bg-primary: rgba(40, 44, 51, 1);
-    /* --bg-primary: rgba(41, 45, 51, 1); */
     --bg-secondary: rgba(44, 48, 54, 1);
 
     --red-accent: rgba(224, 107, 116, 1);
@@ -186,7 +185,6 @@ body {
     gap: 0.5rem;
     position: absolute;
     left: 50%;
-    /* bottom: 1rem; */
     bottom: 8vh;
     transform: translateX(-50%);
     z-index: 10;
@@ -243,7 +241,6 @@ body {
     overflow-y: hidden;
     transition: max-height 220ms ease, opacity 180ms ease;
     will-change: max-height, opacity;
-    /* pointer-events: none; */
 }
 
 .language__selector__content.open {
@@ -263,7 +260,7 @@ body {
 .btn {
     position: relative;
     display: inline-block;
-    overflow: hidden; /* cache le remplissage */
+    overflow: hidden;
     z-index: 1;
     border: 0.125rem solid var(--purple-soft);
     padding: 0.5rem 1rem;
@@ -367,7 +364,7 @@ body {
     margin: 0 auto;
     background: var(--bg-primary);
     margin-bottom: 3.125rem;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: var(--font-medium);
 }
 
@@ -684,7 +681,7 @@ footer .container {
 
 .fact__item {
     border: 1px solid var(--gray-soft);
-    text-wrap: nowrap;
+    text-wrap: wrap;
     padding: 8px;
 }
 
@@ -736,7 +733,6 @@ footer .container {
     }
 
     .quotation {
-        font-size: 1.5rem;
         margin-bottom: 4.625rem;
     }
 
@@ -750,6 +746,12 @@ footer .container {
 
     .section__btn__more span {
         display: initial;
+    }
+}
+
+@media screen and (min-width: 690px) {
+    .fact__item {
+        text-wrap: nowrap;
     }
 }
 
@@ -771,11 +773,15 @@ footer .container {
         display: block;
     }
 
+    #skill .hide__image {
+        display: none;
+    }
+
+
     .section__body {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 3.75rem;
     }
 
     .section__fact {
@@ -784,6 +790,10 @@ footer .container {
 
     .line__div {
         flex-direction: row;
+    }
+
+    .skill__item {
+        height: max-content;
     }
 
     .fun__fact {
@@ -802,9 +812,15 @@ footer .container {
     }
 }
 
+@media screen and (min-width: 898px) {    
+    #skill .hide__image {
+        display: block;
+    }
+}
+
 @media screen and (min-width: 900px) {
     .navbar {
-        min-width: 28.75rem;
+        min-width: calc(64rem * 0.6);
     }
 
     .t_link a {

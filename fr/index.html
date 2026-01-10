@@ -3,9 +3,353 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="icon" href="../assets/Logo fill.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/reset.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <title>Code With Yaba Jean de DIEU</title>
 </head>
 <body>
-    <h1>OK</h1>
+    <div class="container">
+        <header class="topbar">
+            <a href="#" class="logo topbar__logo">
+                <img src="../assets/Logo.svg" alt="logo">Elias
+            </a>
+            <nav class="navbar">
+                <ul class="navbar__links">
+                    <li class="navbar__link t_link active">
+                        <a href="./index.html"><span class="tag navbar_link_tag">#</span>accueil</a>
+                    </li>
+                    <li class="navbar__link t_link">
+                        <a href="./about.html"><span class="tag navbar_link_tag">#</span>à-propos</a>
+                    </li>
+                    <li class="navbar__link t_link">
+                        <a href="#projects"><span class="tag navbar_link_tag">#</span>projets</a>
+                    </li>
+                    <li class="navbar__link t_link">
+                        <a href="./contact.html"><span class="tag navbar_link_tag">#</span>contact</a>
+                    </li>
+                    <div class="navbar__link language__selector">
+                        <div id="language__selected">
+                            FR
+                            <img id="dropdown" src="../assets/images/icons/dropdown.png" alt="dropdown icon">
+                            <img id="dropup" src="../assets/images/icons/dropup.png" alt="dropdown icon">
+                        </div>
+                        <ul class="language__selector__content">
+                            <li value="EN">
+                                <a style="cursor: pointer;" href="../index.html">EN</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="navbar__social__media">
+                        <a href="https://github.com/victoire20" target="_blank" class="social__media__icon">
+                            <img src="../assets/images/icons/github-2.png" alt="github icon">
+                        </a>
+                        <a href="#" class="social__media__icon">
+                            <img src="../assets/images/icons/dribble-2.png" alt="dribble icon">
+                        </a>
+                        <a href="#" class="social__media__icon">
+                            <img src="../assets/images/icons/figmat-2.png" alt="figmat icon">
+                        </a>
+                    </div>
+                </ul>
+            </nav>
+            <div href="#" class="sandwitch__btn">
+                <a href="#" id="open__menu"><img src="../assets/images/icons/sandwitch.png" alt="menu button" /></a>
+                <a href="#" id="close__menu"> <img src="../assets/images/icons/close.png" alt="close menu button" /></a>
+            </div>
+        </header>
+        <main>
+            <!-- Section hero -->
+            <section class="row hero" id="hero">
+                <div class="hero__content">
+                    <h1 class="hero__title">
+                        Je suis un <span class="hero__stack">développeur <span class="text__nowrap">full-stack</span></span> orienté applications<span class="hero__stack"> web</span> et <span class="hero__stack">API</span>
+                    </h1>
+                    <p class="hero__description">
+                        Je conçois des solutions web performantes, sécurisées et évolutives, du front-end au back-end
+                    </p>
+                    <div class="btn__group">
+                        <a href="./contact.html" class="btn">Me contacter!!</a>
+                        <a href="#" class="btn">Télécharger mon CV!!</a>
+                    </div>
+                </div>
+                <div class="hero__image">
+                    <img src="../assets/images/hero-image-1.png" alt="Hero Image">
+                    <div class="hero__website__status">
+                        <div class="hero__website__status__dot"></div> 
+                        <div>Actuellement disponible pour de <span class="website__designation">nouveaux projets</span></div>
+                    </div>
+                </div>
+            </section>
+            <!-- End of Section hero -->
+            
+            <div class="quotation">
+                <div class="quotation__content">
+                    <img src="../assets/images/icons/quote.png" alt="quote image">
+                    La science sans religion est boiteuse, la religion sans science est aveugle
+                </div>
+                <div class="quotation__author">
+                    <img src="../assets/images/icons/quote.png" alt="quote image">
+                    - Albert Einstein
+                </div>
+            </div>
+
+            <!-- Section project -->
+            <section class="row" id="projects">
+                <div class="section__title">
+                    <div class="section__title__text">
+                        <h2><span class="tag">#</span>projets</h2>
+                        <div class="section__bar"></div>
+                    </div>
+                    <div class="section__btn__more">
+                        <a href="./project.html"><span>Voir plus</span> ~~></a>
+                    </div>
+                </div>
+                <div class="grid">
+                    <div class="card grid__items">
+                        <a href="#">
+                            <img src="../assets/images/cards/chertnodes.jpg" alt="Project 1">
+                        </a>
+                        <h3 class="card__title">
+                            <span>HTML</span> <span>SCSS</span> <span>Python</span> <span>Flask</span>
+                        </h3>
+                        <div class="card__body">       
+                            <h2 class="card__body__title">
+                                <a href="#">ChertNodes</a>
+                            </h2>                     
+                            <p class="card__body__content">
+                                Minecraft servers hosting 
+                            </p>
+                        </div>
+                        <div class="card__footer">
+                            <div class="btn__group">
+                                <a href="#" class="btn">En ligne <~></a>
+                                <a href="#" class="btn disabled">Privé >=</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card grid__items">
+                        <a href="#">
+                            <img src="../assets/images/cards/projectx.png" alt="Project 2">
+                        </a>
+                        <h3 class="card__title">
+                            <span>React</span> 
+                            <span>Express</span> 
+                            <span>Discord.js</span> 
+                            <span>Node.js</span> 
+                            <span>HTML</span> 
+                            <span>SCSS</span> 
+                            <span>Python</span> 
+                            <span>Flask</span>
+                        </h3>
+                        <div class="card__body">       
+                            <h2 class="card__body__title"><a href="#">ProjectX</a></h2>                     
+                            <p class="card__body__content">
+                                Discord anti-crash bot 
+                            </p>
+                        </div>
+                        <div class="card__footer">
+                            <div class="btn__group">
+                                <a href="#" class="btn">En ligne <~></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card grid__items">
+                        <a href="#">
+                            <img src="../assets/images/cards/kahoot.png" alt="Project 3">
+                        </a>
+                        <h3 class="card__title">
+                            <span>CSS</span> 
+                            <span>Express</span> 
+                            <span>Node.js</span> 
+                        </h3>
+                        <div class="card__body">       
+                            <h2 class="card__body__title"><a href="#">Kahoot Answers Viewer</a></h2>                     
+                            <p class="card__body__content">
+                                Get answers to your kahoot quiz
+                            </p>
+                        </div>
+                        <div class="card__footer">
+                            <div class="btn__group">
+                                <a href="#" class="btn">En ligne <~></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- End of Section project -->
+
+            <!-- Section skill -->
+            <section class="row" id="skill">
+                <div class="section__title">
+                    <div class="section__title__text">
+                        <h2><span class="tag">#</span>compétences</h2>
+                        <div class="section__bar"></div>
+                    </div>
+                </div>
+                <div class="section__body">
+                    <div class="section__image">
+                        <img src="../assets/images/group-square.png" alt="section image">
+                    </div>
+                    <div class="skills__layout">
+                        <div class="skills__layout">
+                            <!-- colonne 1 -->
+                            <div class="col">
+                                <div class="skill__item">
+                                    <div class="skills__designation">Languages</div>
+                                    <div class="skills__list">
+                                        <span>Python</span> <span>JavaScript</span> <span>PhP</span> <span>SQL</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- colonne 2 -->
+                             <div class="col">
+                                <div class="skill__item">
+                                    <div class="skills__designation">Base de données</div>
+                                    <div class="skills__list">
+                                        <span>PostgresSQL</span> <span>MySQL</span> <span>SQLite</span> <span>NOSQL</span> <span>Redis</span>
+                                    </div>
+                                </div>
+                                <div class="skill__item">
+                                    <div class="skills__designation">Autres</div>
+                                    <div class="skills__list">
+                                        <span>HTML</span> <span>CSS</span> <span>Jquery</span> <span>REST API / JWT</span> <span>Swagger / OpenAPI</span> <span>Jinja</span>
+                                    </div>
+                                </div>
+                             </div>
+                            <!-- colonne 3 -->
+                             <div class="col">
+                                <div class="skill__item">
+                                    <div class="skills__designation">Outils</div>
+                                    <div class="skills__list">
+                                        <span>Git / GitHub</span> <span>Docker</span> <span>CI/CD</span> <span>Postman</span> <span>VSCode</span> <span>Linux / IntelliJ IDEA</span>
+                                    </div>
+                                </div>
+                                <div class="skill__item">
+                                    <div class="skills__designation">Frameworks</div>
+                                    <div class="skills__list">
+                                        <span>Django</span> <span>FastAPI</span> <span>React</span> <span>Laravel</span> <span>Bootstrap</span>
+                                    </div>
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- End Section skill -->
+            
+            <!-- Section about -->
+            <section class="row" id="about">
+                <div class="section__title">
+                    <div class="section__title__text">
+                        <h2><span class="tag">#</span>à-propos-de-moi</h2>
+                        <div class="section__bar"></div>
+                    </div>
+                </div>
+                <div class="section__body">
+                    <div class="section__body__content">
+                        <div class="text__content">
+                            <p>Bonjour, je suis Yaba Jean de DIEU!</p>
+                            <p>
+                                Développeur full-stack avec plus de 3 ans d’expérience, j’ai commencé par le back-end avant 
+                                d’évoluer vers des solutions web complètes, robustes et bien structurées.
+                                
+                            </p>
+                            <p>
+                                Je conçois des applications web performantes, sécurisées et orientées utilisateur, 
+                                en accordant une attention particulière à l’architecture, à la maintenabilité et à la qualité du code.
+                                Curieux et rigoureux, je continue d’approfondir mes compétences et de m’adapter aux technologies 
+                                modernes pour livrer des solutions fiables et évolutives.
+                            </p>
+                        </div>
+                        <a href="./about.html" class="btn btn__about">En savoir plus -></a>
+                    </div>
+                    <div class="section__image">
+                        <img src="../assets/images/about-1.png" alt="section image">
+                    </div>
+                </div>
+            </section>
+            <!-- End Section about -->
+
+            <!-- Section contact -->
+            <section class="last_row" id="contact">
+                <div class="section__title">
+                    <div class="section__title__text">
+                        <h2><span class="tag">#</span>contacts</h2>
+                        <div class="section__bar"></div>
+                    </div>
+                </div>
+                <div class="section__body">
+                    <div class="section__body__content">
+                        <div class="text__content">
+                            <p>
+                                Je suis intéressé(e) par des opportunités de travail en freelance. Toutefois, si vous avez d'autres demandes ou questions, n'hésitez pas à me contacter.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="section__image">
+                        <div class="contact__infos">
+                            <p class="contact__infos__title">Écrivez-moi ici</p>
+                            <div class="contact__infos__content">
+                                <div>
+                                    <a href="#"><img src="../assets/images/icons/discord.png" alt="discord icon"><span>!Elias#3519</span></a>
+                                </div>
+                                <div>
+                                    <a href="mailto:gauisyaba@gmail.com"><img src="../assets/images/icons/email.png" alt="email icon"><span>gauisyaba@gmail.com</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- End Section contact -->
+        </main>
+    </div>
+    <hr>
+    <footer>
+        <div class="container">
+            <div class="footer__content">
+                <div>
+                    <div class="footer__contact">
+                        <a href="#" class="footer__logo">
+                            <img src="../assets/Logo.png" alt="footer logo">
+                            <span>Elias</span>
+                        </a>
+                        <span>gauisyaba@gmail.com</span>
+                    </div>
+                    <div class="footer__description">
+                        <p>Développeur back-end & full-stack</p>
+                    </div>
+                </div>
+                <div class="footer__media">
+                    <h4>Médias</h4>
+                    <div class="footer__media__icon">
+                        <a href="https://github.com/victoire20" target="_blank"><img src="../assets/images/icons/github.png" alt="github icon"></a>
+                        <a href="#"><img src="../assets/images/icons/dribble.png" alt="dribble icon"></a>
+                        <a href="#"><img src="../assets/images/icons/discord.png" alt="discord icon"></a>
+                    </div>
+                </div>
+            </div>
+            <p class="copyright">
+                &copy; Copyright <span class="year"></span> 
+                <a href="https://github.com/victoire20">YABA LOUO JEAN DE DIEU</a>. Design inspiré par <a href="https://www.figma.com/@elias_dev">Elias</a>.
+            </p>
+        </div>
+    </footer>
+
+    <div class="head__social">
+        <div class="head__media__bar"></div>
+        <div class="head__media__icon">
+            <a href="https://github.com/victoire20" target="_blank"><img src="../assets/images/icons/github-2.png" alt="github icon"></a>
+            <a href="#"><img src="../assets/images/icons/dribble-2.png" alt="dribble icon"></a>
+            <a href="#"><img src="../assets/images//icons/figmat-2.png" alt="figma icon"></a>
+        </div>
+    </div>
+    
+    <script type="module" src="../assets/js/app.js"></script>
 </body>
 </html>
