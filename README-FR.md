@@ -9,7 +9,7 @@
 ---
 
 ## 🌐 Navigation / Navigation
-- [🇬🇧 Anglais](#personal-portfolio--portfolio-personnel)
+- [🇬🇧 Anglais](./README.md)
 
 ---
 
