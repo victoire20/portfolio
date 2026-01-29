@@ -1,0 +1,46 @@
+.head__social {
+    display: none;
+}
+
+@media screen and (min-width: 900px) {
+    .head__social {
+        position: absolute;
+        top: 0;
+        left: 1.063rem;
+        padding: 0 0.313rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .head__media__bar {
+        height: 11.938rem;
+        width: 0.125rem;
+        background: var(--gray-soft);
+    }
+
+    .head__media__icon {
+        display: flex;
+        flex-direction: column;
+        gap: 0.875rem;
+    }
+
+    .head__media__icon img {
+        width: 1.313rem;
+        height: 1.313rem;
+        opacity: 0.7;
+        transition: opacity 150ms ease;
+    }
+
+    .head__media__icon a:hover img {
+        transform: scale(1.3);
+        opacity: 1;
+        transition: transform 120ms ease;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .head__media__icon img,
+    .head__media__icon a:hover img { transition: none !important; }
+}
