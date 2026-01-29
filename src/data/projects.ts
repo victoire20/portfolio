@@ -52,8 +52,8 @@ export const projects: Project[] = [
         skills: ["React", "CSS", "TypeScript"],
         cover: "/images/projects/Portfolio.jpg",
         isPrivate: false,
-        liveUrl: "https://example.com",
-        githubUrl: "https://github.com/...",
+        liveUrl: "portfolio-eight-dun-30.vercel.app",
+        githubUrl: "https://github.com/victoire20/portfolio",
         isSmallProject: false
     },
     {

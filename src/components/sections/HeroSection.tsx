@@ -15,7 +15,7 @@ export default function HeroSection() {
                 </p>
                 <div className="btn__group">                    
                     <Button className='btn' url='/contact'>Contact me!!</Button>
-                    <Button className='btn' url='#'>Resume me!!</Button>
+                    <Button className='btn' url='#' download>Resume me!!</Button>
                 </div>
             </div>
             <div className="hero__image">

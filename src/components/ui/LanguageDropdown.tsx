@@ -33,7 +33,8 @@ export default function LanguageDropdown({ isOpen, onOpenChange }: LanguageDropd
             role="listbox"
         >
             <li>
-                <Link to={pathname === '/index' ? "/fr/" : `/fr${pathname}`}>FR</Link>
+                {/* <Link to={pathname === '/index' ? "/fr/" : `/fr${pathname}`}>FR</Link> */}
+                <Link to="#">FR</Link>
             </li>
         </ul>
     </div>
