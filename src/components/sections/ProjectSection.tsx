@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ReactNode, AnchorHTMLAttributes } from 'react'
+import type { ReactNode, AnchorHTMLAttributes } from 'react'
 
 
 
