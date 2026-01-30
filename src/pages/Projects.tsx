@@ -1,10 +1,12 @@
-import p1 from '../assets/images/projects/chertnodes.jpg'
+import p1 from '../assets/images/projects/xora-saas-landing-page.jpg'
 import p2 from '../assets/images/projects/kahoot.png'
 import p3 from '../assets/images/projects/projectx.png'
 import p4 from '../assets/images/projects/kotik.png'
 import p5 from '../assets/images/projects/portfolio.png'
 import ProjectSection from '../components/sections/ProjectSection'
 import PageHeaderSection from '../components/sections/PageHeaderSection'
+
+import Button from "../components/ui/button"
 
 
 export default function Projects() {
@@ -15,23 +17,23 @@ export default function Projects() {
             <ProjectSection id='projects' className='row' title='complete-apps' hasBar={false} hasMoreBtn={false}>                
                 <div className="card grid__items">
                     <a href="#">
-                        <img src={p1} alt="Project 1" />
+                        <img src={p1} alt="Xora Saas landing Page" />
                     </a>
                     <h3 className="card__title">
-                        <span>HTML</span> <span>SCSS</span> <span>Python</span> <span>Flask</span>
+                        <span>HTML</span> <span>CSS</span> <span>React JS</span> <span>Tailwind CSS</span> <span>Vercel</span>
                     </h3>
                     <div className="card__body">       
                         <h2 className="card__body__title">
-                            <a href="#">ChertNodes</a>
+                            <a href="#">Xora Saas Landing Page</a>
                         </h2>                     
                         <p className="card__body__content">
-                            Minecraft servers hosting 
+                            Project completed during training on the Tailwind CSS framework
                         </p>
                     </div>
                     <div className="card__footer">
-                        <div className="btn__group">
-                            <a href="#" className="btn">{'Live <~>'}</a>
-                            <a href="#" className="btn disabled">{'Cached >='}</a>
+                        <div className="flex flex-row items-start gap-[0.438rem]">
+                            <Button target="_blank" className='btn' url='https://portfolio-eight-dun-30.vercel.app'>{"Live <~>"}</Button>
+                            <Button target="_blank" className='btn' url='https://github.com/victoire20/xora-saas-landing-page'>{"Github <~>"}</Button>
                         </div>
                     </div>
                 </div>

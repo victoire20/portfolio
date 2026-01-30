@@ -8,7 +8,7 @@ import SkillSection from "../components/sections/SkillSection"
 import Button from "../components/ui/button"
 
 
-import Project1 from '../assets/images/projects/chertnodes.jpg'
+import Project1 from '../assets/images/projects/xora-saas-landing-page.jpg'
 import Project2 from '../assets/images/projects/projectx.png'
 import Project3 from '../assets/images/projects/kahoot.png'
 
@@ -23,23 +23,23 @@ export default function Home() {
                 <ProjectSection id="projects" className="row medium-square-right" title="projects" hasBar={true} hasMoreBtn={true}>
                     <div className="card grid__items">
                         <a href="#">
-                            <img src={Project1} alt="Project 1" />
+                            <img src={Project1} alt="Xora Saas landing Page" />
                         </a>
                         <h3 className="card__title">
-                            <span>HTML</span> <span>SCSS</span> <span>Python</span> <span>Flask</span>
+                            <span>HTML</span> <span>CSS</span> <span>React JS</span> <span>Tailwind CSS</span> <span>Vercel</span>
                         </h3>
                         <div className="card__body">       
                             <h2 className="card__body__title">
-                                <a href="#">ChertNodes</a>
+                                <a href="#">Xora Saas Landing Page</a>
                             </h2>                     
                             <p className="card__body__content">
-                                Minecraft servers hosting 
+                                Project completed during training on the Tailwind CSS framework
                             </p>
                         </div>
                         <div className="card__footer">
-                            <div className="btn__group">
-                                <Button className='btn' url='#'>{"Live <~>"}</Button>
-                                <Button className='btn disabled' url='#'>{"Cached >="}</Button>
+                            <div className="flex flex-row items-start gap-[0.438rem]">
+                                <Button target="_blank" className='btn' url='https://portfolio-eight-dun-30.vercel.app'>{"Live <~>"}</Button>
+                                <Button target="_blank" className='btn' url='https://github.com/victoire20/xora-saas-landing-page'>{"Github <~>"}</Button>
                             </div>
                         </div>
                     </div>
@@ -85,8 +85,9 @@ export default function Home() {
                             </p>
                         </div>
                         <div className="card__footer">
-                            <div className="btn__group">
+                            <div className="flex flex-row items-start gap-[0.438rem]">
                                 <a href="#" className="btn">{"Live <~>"}</a>
+                                <Button className='btn disabled' url='#'>{"Cached >="}</Button>
                             </div>
                         </div>
                     </div>

@@ -40,7 +40,7 @@ export default function Header() {
             <NavLink to="/" className="logo topbar__logo"><img src={Logo} alt="logo" />Elias</NavLink>
             <nav className={isOpenMobileMenu ? "navbar open" : "navbar"}>
                 <ul className="navbar__links">
-                    <li className={`navbar__link t_link ${pathname === '/index' ? 'active' : ''}`}>
+                    <li className={`navbar__link t_link ${pathname === '/' ? 'active' : ''}`}>
                         <NavLink to="/" onClick={() => setIsOpenMobileMenu(false)}><span className="tag navbar_link_tag">#</span>home</NavLink>
                     </li>
                     <li className={`navbar__link t_link ${pathname === '/about' ? 'active' : ''}`}>
@@ -58,7 +58,7 @@ export default function Header() {
                     <li className={`navbar__link t_link ${pathname === '/contact' ? 'active' : ''}`}>
                         <NavLink to="/contact" onClick={() => setIsOpenMobileMenu(false)}><span className="tag navbar_link_tag">#</span>contact</NavLink>
                     </li>
-                    <LanguageDropdown isOpen={isOpen}  onOpenChange={setIsOpen} />                    
+                    <LanguageDropdown isOpen={isOpen}  onOpenChange={setIsOpen} pathname={pathname} />                    
 
                     <li className="navbar__social__media">
                         <a href="https://github.com/victoire20" target="_blank" className="social__media__icon">

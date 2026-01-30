@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { Icons } from "../../icons"
 
 import './LanguageDropdown.css'
@@ -6,12 +6,12 @@ import './LanguageDropdown.css'
 
 type LanguageDropdownProps = {
     isOpen: boolean
+    pathname: string
     onOpenChange: (value: boolean) => void
 }
 
 
-export default function LanguageDropdown({ isOpen, onOpenChange }: LanguageDropdownProps) {
-    const { pathname } = useLocation()
+export default function LanguageDropdown({ isOpen, pathname, onOpenChange }: LanguageDropdownProps) {
 
     return <div className="navbar__link language__selector">
         <div

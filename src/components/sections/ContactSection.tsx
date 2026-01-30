@@ -21,12 +21,12 @@ export default function ContactSection() {
                     <div className="contact__infos">
                         <p className="contact__infos__title">Message me here</p>
                         <div className="contact__infos__content">
-                            <div>
-                                <a href="#"><img src={Icons.discord} alt="discord icon" /><span>!Elias#3519</span></a>
-                            </div>
-                            <div>
-                                <a href="mailto:gauisyaba@gmail.com"><img src={Icons.email} alt="email icon" /><span>gauisyaba@gmail.com</span></a>
-                            </div>
+                            <a href="#" className="flex flex-row items-center"><img src={Icons.discord} alt="discord icon" />
+                                <span>!Elias#3519</span>
+                            </a>
+                            <a href="mailto:gauisyaba@gmail.com" className="flex flex-row items-center"><img src={Icons.email} alt="email icon" />
+                                <span>gauisyaba@gmail.com</span>
+                            </a>
                         </div>
                     </div>
                 </div>

@@ -7,7 +7,7 @@ export default function Footer() {
     return (
         <footer>
             <div className="container">
-                <div className="footer__content">
+                <div className="md:flex justify-between md:items-center footer__content">
                     <div>
                         <div className="footer__contact">
                             <a href="#" className="footer__logo">
@@ -17,7 +17,7 @@ export default function Footer() {
                             <span>gauisyaba@gmail.com</span>
                         </div>
                         <div className="footer__description">
-                            <p>Back-end & full-stack developer</p>
+                            <p>Full-stack developer</p>
                         </div>
                     </div>
                     <div className="footer__media">

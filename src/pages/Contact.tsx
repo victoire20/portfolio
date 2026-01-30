@@ -18,12 +18,8 @@ export default function Contact() {
                         <div className="contact__infos">
                         <p className="contact__infos__title">Message me here</p>
                         <div className="contact__infos__content">
-                            <div>
-                                <a href="#"><img src={Icons.discord} alt="discord icon" /><span>!Elias#3519</span></a>
-                            </div>
-                            <div>
-                                <a href="#"><img src={Icons.email} alt="email icon" /><span>elias@elias.me</span></a>
-                            </div>
+                            <a href="#" className="flex flex-row items-center"><img src={Icons.discord} alt="discord icon" /><span>!Elias#3519</span></a>
+                            <a href="#" className="flex flex-row items-center"><img src={Icons.email} alt="email icon" /><span>elias@elias.me</span></a>
                         </div>
                     </div>
                 </div>
