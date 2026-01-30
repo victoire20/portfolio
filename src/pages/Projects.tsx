@@ -122,7 +122,7 @@ export default function Projects() {
                     </div>
                     <div className="card__footer">
                         <div className="btn__group">
-                            <a href="#" className="btn">{'Github <~>'}</a>
+                            <Button target="_blank" className='btn' url='https://github.com/victoire20/portfolio'>{'Github <~>'}</Button>
                         </div>
                     </div>
                 </div>
