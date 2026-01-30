@@ -27,6 +27,11 @@ body {
     overflow-x: hidden;
 }
 
+#root {
+    scroll-behavior: smooth;
+    overflow: hidden;
+}
+
 .mb-3 {
     margin-bottom: 3rem;
 }
@@ -56,7 +61,7 @@ body {
 
 .container {
     max-width: 64rem;
-    margin: 0 1rem;
+    padding: 0 1rem;
 }
 
 /* Désactive scroll (sera ajouté par JS) */
@@ -127,12 +132,6 @@ body {
   height: 91px;            /* taille de l'image */
   background-size: contain;  /* l'image garde ses proportions */
   background-repeat: no-repeat;
-}
-
-/* image collée à droite */
-.medium-square-right::before {
-  right: -450px;               /* décale l'image hors du bloc */
-  background-image: url(/background/bg-square-fill-medium.png);
 }
 
 .last_row {
@@ -473,6 +472,12 @@ body {
 @media screen and (min-width: 898px) {    
     #skill .hide__image {
         display: block;
+    }
+    
+    /* image collée à droite */
+    .medium-square-right::before {
+    right: -450px;               /* décale l'image hors du bloc */
+    background-image: url(/background/bg-square-fill-medium.png);
     }
 }
 
