@@ -94,7 +94,7 @@ export default function Home() {
                     </div>
                 </ProjectSection>
                 <SkillSection />
-                <AboutSection id="about">
+                <AboutSection hasBar={true}>
                     <div className="section__body__content">
                         <div className="text__content">
                             <p>{t('home.about_p1')}</p>

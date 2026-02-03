@@ -2,6 +2,7 @@ import { Icons } from "../../icons"
 import { useTranslation } from "react-i18next"
 
 import './LanguageDropdown.css'
+import { useEffect } from "react"
 
 
 type LanguageDropdownProps = {
@@ -12,14 +13,22 @@ type LanguageDropdownProps = {
 
 export default function LanguageDropdown({ isOpen, onOpenChange }: LanguageDropdownProps) {
     const { i18n } = useTranslation()
-    const currentLang = i18n.language?.toLowerCase().startsWith('fr') ? 'FR' : 'EN'
+    let currentLang = i18n.language?.toLowerCase().startsWith('fr') ? 'FR' : 'EN'
 
     const handleChange = (lang: 'en' | 'fr') => {
         if (i18n.language !== lang) {
             i18n.changeLanguage(lang)
+            localStorage.setItem('lang', lang)
         }
         onOpenChange(false)
     }
+
+    useEffect(() => {
+        const storedLang = localStorage.getItem('lang')
+        if (storedLang && storedLang !== i18n.language) {
+            i18n.changeLanguage(storedLang)
+        }
+    }, [i18n.language])
 
     return <div className="navbar__link language__selector">
         <div

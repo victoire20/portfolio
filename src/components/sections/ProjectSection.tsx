@@ -22,7 +22,7 @@ export default function ProjectSection({ id, className, title, hasBar, hasMoreBt
             <div className="section__title">
                 <div className="section__title__text">
                     <h2><span className="tag">#</span>{title}</h2>
-                    {hasBar && <div className="section__bar"></div>}
+                    {hasBar && <div className="md:h-0.5 md:w-90  md:bg-(--purple-soft)"></div>}
                 </div>
                 {hasMoreBtn && <div className="section__btn__more">
                     <Link to="/projects"><span>{t('home.read_more')}</span>{" ~~>"}</Link>

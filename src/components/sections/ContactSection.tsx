@@ -9,7 +9,7 @@ export default function ContactSection() {
             <div className="section__title">
                 <div className="section__title__text">
                     <h2><span className="tag">#</span>contacts</h2>
-                    <div className="section__bar"></div>
+                    <div className="md:h-0.5 md:w-30  md:bg-(--purple-soft)"></div>
                 </div>
             </div>
             <div className="section__body">

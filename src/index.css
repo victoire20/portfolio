@@ -191,12 +191,6 @@ body {
     gap: 1rem;
 }
 
-.section__bar {
-    height: 1px;
-    width: 0vw;
-    background: var(--purple-soft);
-}
-
 .section__btn__more {
     font-size: 1rem;
 }
