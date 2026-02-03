@@ -1,9 +1,12 @@
+import { useTranslation } from 'react-i18next'
 import Logo from '/Logo.png'
 import { Icons } from '../../icons'
 
 import './Footer.css'
 
 export default function Footer() {
+    const { t } = useTranslation()
+
     return (
         <footer>
             <div className="container">
@@ -17,7 +20,7 @@ export default function Footer() {
                             <span>gauisyaba@gmail.com</span>
                         </div>
                         <div className="footer__description">
-                            <p>Full-stack developer</p>
+                            <p>{t('footer.job_title')}</p>
                         </div>
                     </div>
                     <div className="footer__media">
@@ -30,8 +33,7 @@ export default function Footer() {
                     </div>
                 </div>
                 <p className="copyright">
-                    &copy; Copyright <span className="year"></span> 
-                    Code By <a href="https://github.com/victoire20">Yaba J</a>. and designed by <a href="https://www.figma.com/@elias_dev">Elias</a>.
+                    &copy;{new Date().getFullYear()}. {t('footer.first_segment_content')}<a href="https://github.com/victoire20">Yaba J</a>.{t('footer.second_segment_content')}<a href="https://www.figma.com/@elias_dev">Elias</a>.
                 </p>
             </div>
         </footer>

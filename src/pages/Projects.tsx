@@ -1,5 +1,5 @@
 import p1 from '../assets/images/projects/xora-saas-landing-page.jpg'
-import p2 from '../assets/images/projects/kahoot.png'
+import p2 from '../assets/images/projects/browser-extension-manager-ui.jpg'
 import p3 from '../assets/images/projects/projectx.png'
 import p4 from '../assets/images/projects/kotik.png'
 import p5 from '../assets/images/projects/portfolio.png'
@@ -39,7 +39,7 @@ export default function Projects() {
                 </div>
                 <div className="card grid__items">
                     <a href="#">
-                        <img src={p2} alt="Project 2" />
+                        <img src={p2} alt="Browser extension manager ui" />
                     </a>
                     <h3 className="card__title">
                         <span>CSS</span> 
@@ -47,14 +47,15 @@ export default function Projects() {
                         <span>Node.js</span> 
                     </h3>
                     <div className="card__body">       
-                        <h2 className="card__body__title"><a href="#">Kahoot Answers Viewer</a></h2>                     
+                        <h2 className="card__body__title"><a href="#">Browser extension manager ui</a></h2>                     
                         <p className="card__body__content">
-                            Get answers to your kahoot quiz
+                            This is a challenge completed on frontendmentor.io
                         </p>
                     </div>
                     <div className="card__footer">
                         <div className="btn__group">
-                            <a href="#" className="btn">{'Live <~>'}</a>
+                            <Button target="_blank" className='btn' url='https://dapper-smakager-f5b8f0.netlify.app'>{"Live <~>"}</Button>
+                            <Button target="_blank" className='btn' url='https://github.com/victoire20/browser-extension-manager-ui'>{"Github <~>"}</Button>
                         </div>
                     </div>
                 </div>

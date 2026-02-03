@@ -1,3 +1,64 @@
 {
-    "Welcome to React": "Bienvenue à React et react-i18next"
+  "nav": {
+    "home": "accueil",
+    "about": "a-propos",
+    "projects": "projets",
+    "contact": "contact"
+  },
+  "hero": {
+    "welcome_before": "Je suis un ",
+    "welcome_stack_suffix": " développeur",
+    "welcome_middle": " specialise dans les applications ",
+    "welcome_stack_web": "web",
+    "welcome_after_web": " et les ",
+    "welcome_stack_apis": "API",
+    "subtitle": "Je developpe des solutions web performantes, securisees et evolutives, du front-end au back-end.",
+    "contact_me": "Contactez-moi !!",
+    "resume_me": "Telecharger mon CV",
+    "status_first_segment": "Actuellement disponible pour ",
+    "status_second_segment": "de nouveaux projets"
+  },
+  "quotation": {
+    "content": "La science sans la religion est boiteuse, la religion sans la science est aveugle."
+  },
+  "skills": {
+    "title": "Compétences",
+    "languages": "Langages",
+    "tools": "Outils",
+    "databases": "Bases de données",
+    "others": "Autres"
+  },
+  "home": {
+    "about_title": "à-propos-de-moi",
+    "projects_title": "projets",
+    "about_p1": "Bonjour, je suis Jean de DIEU Yaba !",
+    "about_p2": "Je suis un développeur full-stack avec plus de 3 ans d'expérience. J'ai commencé ma carrière dans le développement back-end avant d'évoluer vers la création de solutions web complètes et bien structurées.",
+    "about_p3": "Je conçois des applications web performantes, sécurisées et centrées sur l'utilisateur, en accordant une attention particulière à l'architecture, à la maintenabilité et à la qualité du code. Animé par une volonté d'amélioration continue, je ne cesse d'apprendre et de m'adapter aux technologies modernes afin de fournir des systèmes fiables et évolutifs.",
+    "read_more": "Voir plus",
+    "contact_content": "Je suis intéressé(e) par des opportunités de travail en freelance. Toutefois, si vous avez d'autres demandes ou questions, n'hésitez pas à me contacter.",
+    "call_to_action": "Ecrivez-moi ici"
+  },
+  "about": {
+    "first_sentence": "Qui suis-je ?",
+    "first_paragraph": "Je suis Jean de DIEU Yaba, un développeur full-stack passionné avec plus de 3 ans d'expérience dans la création d'applications web robustes. Mon parcours a débuté dans le développement back-end, où j'ai perfectionné mes compétences dans la construction de solutions côté serveur évolutives et efficaces. Au fil du temps, j'ai élargi mon expertise pour englober le développement full-stack, ce qui me permet de créer des solutions web complètes, à la fois conviviales et techniquement solides.",
+    "second_paragraph": "Mon approche du développement est centrée sur l'écriture d'un code propre et maintenable, en respectant les meilleures pratiques. Je maîtrise une variété de langages de programmation et de frameworks, ce qui me permet de choisir les bons outils pour chaque projet. Je m'engage à apprendre continuellement et à rester à jour avec les dernières tendances de l'industrie afin de garantir que mes solutions soient modernes et efficaces.",
+    "third_paragraph": "La collaboration et la communication sont des aspects clés de mon éthique de travail. J'apprécie de travailler en étroite collaboration avec les clients et les membres de l'équipe pour comprendre leurs besoins et fournir des solutions qui dépassent les attentes. Qu'il s'agisse de développer une nouvelle fonctionnalité, d'optimiser les performances ou d'assurer la sécurité, je suis dédié à fournir des résultats de haute qualité qui favorisent le succès.",
+    "fun_facts_title": "mes-anecdotes-amusantes",
+    "fun_facts_p1": "Je suis nul pour concevoir des maquettes à partir de zéro",
+    "fun_facts_p2": "Je fais du développement full-stack, mais je préfère le travail en back-end",
+    "fun_facts_p3": "L'IA me fascine, même si parfois, le côté humain me manque",
+    "fun_facts_p4": "J'adore les chiens, même si je n'en ai pas",
+    "fun_facts_p5": "Je chéris les moments passés avec ma famille et mes amis"
+  },
+  "project": {
+    "title": "projets",
+    "first_sentence": "Liste de mes projets",
+    "first_subtitle": "applications-completes",
+    "second_subtitle": "petits-projets"
+  },
+  "footer": {
+    "job_title": "Développeur full-stack",
+    "first_segment_content": " Code par ",
+    "second_segment_content": " design par "
+  }
 }

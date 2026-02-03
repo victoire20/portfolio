@@ -4,12 +4,9 @@ import { Icons } from '../../icons'
 import Button from '../ui/button'
 import Logo from '/Logo.png'
 import LanguageDropdown from '../ui/LanguageDropdown'
+import { useTranslation } from 'react-i18next'
 
 import './Header.css'
-
-// import { useTranslation } from 'react-i18next'
-// import i18n from '../../i18n/index'
-// import { withNamespaces } from 'react-i18next'
 
 
 export default function Header() {
@@ -17,7 +14,7 @@ export default function Header() {
     const [isOpen, setIsOpen] = useState(false)
     const [isOpenMobileMenu, setIsOpenMobileMenu] = useState(false)
 
-    // const { t, i18n } = useTranslation()
+    const { t } = useTranslation()
 
 
     useEffect(() => {
@@ -41,24 +38,24 @@ export default function Header() {
             <nav className={isOpenMobileMenu ? "navbar open" : "navbar"}>
                 <ul className="navbar__links">
                     <li className={`navbar__link t_link ${pathname === '/' ? 'active' : ''}`}>
-                        <NavLink to="/" onClick={() => setIsOpenMobileMenu(false)}><span className="tag navbar_link_tag">#</span>home</NavLink>
+                        <NavLink to="/" onClick={() => setIsOpenMobileMenu(false)}><span className="tag navbar_link_tag">#</span>{t('nav.home')}</NavLink>
                     </li>
                     <li className={`navbar__link t_link ${pathname === '/about' ? 'active' : ''}`}>
-                        <NavLink to="/about" onClick={() => setIsOpenMobileMenu(false)}><span className="tag navbar_link_tag">#</span>about</NavLink>
+                        <NavLink to="/about" onClick={() => setIsOpenMobileMenu(false)}><span className="tag navbar_link_tag">#</span>{t('nav.about')}</NavLink>
                     </li>
                     <li className={`navbar__link t_link ${pathname === '/projects' ? 'active' : ''}`}>
                         {pathname === '/' ? (
                         <a href="#projects" className="navbar__link t_link">
-                            <span className="tag navbar_link_tag">#</span>projects
+                            <span className="tag navbar_link_tag">#</span>{t('nav.projects')}
                         </a>
                         ) : (
-                        <NavLink to="/projects" onClick={() => setIsOpenMobileMenu(false)}><span className="tag navbar_link_tag">#</span>projects</NavLink>
+                        <NavLink to="/projects" onClick={() => setIsOpenMobileMenu(false)}><span className="tag navbar_link_tag">#</span>{t('nav.projects')}</NavLink>
                         )}
                     </li>
                     <li className={`navbar__link t_link ${pathname === '/contact' ? 'active' : ''}`}>
-                        <NavLink to="/contact" onClick={() => setIsOpenMobileMenu(false)}><span className="tag navbar_link_tag">#</span>contact</NavLink>
+                        <NavLink to="/contact" onClick={() => setIsOpenMobileMenu(false)}><span className="tag navbar_link_tag">#</span>{t('nav.contact')}</NavLink>
                     </li>
-                    <LanguageDropdown isOpen={isOpen}  onOpenChange={setIsOpen} pathname={pathname} />                    
+                    <LanguageDropdown isOpen={isOpen}  onOpenChange={setIsOpen} />                    
 
                     <li className="navbar__social__media">
                         <a href="https://github.com/victoire20" target="_blank" className="social__media__icon">
@@ -86,5 +83,3 @@ export default function Header() {
         </header>
     )
 }
-
-// export default withNamespaces()(Header);

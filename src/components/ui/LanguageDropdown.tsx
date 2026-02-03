@@ -1,17 +1,25 @@
-import { Link } from "react-router-dom"
 import { Icons } from "../../icons"
+import { useTranslation } from "react-i18next"
 
 import './LanguageDropdown.css'
 
 
 type LanguageDropdownProps = {
     isOpen: boolean
-    pathname: string
     onOpenChange: (value: boolean) => void
 }
 
 
-export default function LanguageDropdown({ isOpen, pathname, onOpenChange }: LanguageDropdownProps) {
+export default function LanguageDropdown({ isOpen, onOpenChange }: LanguageDropdownProps) {
+    const { i18n } = useTranslation()
+    const currentLang = i18n.language?.toLowerCase().startsWith('fr') ? 'FR' : 'EN'
+
+    const handleChange = (lang: 'en' | 'fr') => {
+        if (i18n.language !== lang) {
+            i18n.changeLanguage(lang)
+        }
+        onOpenChange(false)
+    }
 
     return <div className="navbar__link language__selector">
         <div
@@ -20,7 +28,7 @@ export default function LanguageDropdown({ isOpen, pathname, onOpenChange }: Lan
             aria-haspopup="listbox"
             onClick={() => onOpenChange(!isOpen)}
         >
-            EN
+            {currentLang}
             <img
                 className="language__icon"
                 src={isOpen ? Icons.dropup : Icons.dropdown}
@@ -33,8 +41,25 @@ export default function LanguageDropdown({ isOpen, pathname, onOpenChange }: Lan
             role="listbox"
         >
             <li>
-                {/* <Link to={pathname === '/index' ? "/fr/" : `/fr${pathname}`}>FR</Link> */}
-                <Link to="#">FR</Link>
+                {currentLang !== 'EN' ? (
+                    <button
+                        type="button"
+                        role="option"
+                        aria-selected={true}
+                        onClick={() => handleChange('en')}
+                    >
+                        EN
+                    </button>
+                ) : (
+                   <button
+                        type="button"
+                        role="option"
+                        aria-selected={true}
+                        onClick={() => handleChange('fr')}
+                    >
+                        FR
+                    </button> 
+                )}
             </li>
         </ul>
     </div>

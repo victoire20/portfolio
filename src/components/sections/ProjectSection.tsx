@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import type { ReactNode, AnchorHTMLAttributes } from 'react'
 
 
@@ -14,6 +15,8 @@ type ProjectsProps = {
 
 
 export default function ProjectSection({ id, className, title, hasBar, hasMoreBtn, children }: ProjectsProps) {
+    const { t } = useTranslation()
+
     return (
         <section className={className} id={id}>
             <div className="section__title">
@@ -22,7 +25,7 @@ export default function ProjectSection({ id, className, title, hasBar, hasMoreBt
                     {hasBar && <div className="section__bar"></div>}
                 </div>
                 {hasMoreBtn && <div className="section__btn__more">
-                    <Link to="/projects"><span>View all</span>{" ~~>"}</Link>
+                    <Link to="/projects"><span>{t('home.read_more')}</span>{" ~~>"}</Link>
                 </div>}
             </div>
             <div className="grid">

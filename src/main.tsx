@@ -16,8 +16,7 @@ import About from './pages/About'
 import Projects from './pages/Projects'
 import Contact from './pages/Contact'
 import HeadSocial from './components/ui/HeadSocial'
-
-// import './i18n/index'
+import './i18n/index'
 
 
 createRoot(document.getElementById('root')!).render(

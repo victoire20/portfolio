@@ -30,6 +30,15 @@
     opacity: 1;
 }
 
+.language__selector__content button {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    padding: 0.25rem 0;
+}
+
 @media screen and (min-width: 650px) {
     .language__selector__content {
         position: absolute;

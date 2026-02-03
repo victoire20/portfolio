@@ -1,3 +1,64 @@
 {
-  "Welcome to React": "Welcome to React and react-i18next"
+  "nav": {
+    "home": "home",
+    "about": "about",
+    "projects": "projects",
+    "contact": "contact"
+  },
+  "hero": {
+    "welcome_before": "I am a ",
+    "welcome_stack_suffix": " developer",
+    "welcome_middle": " focused on ",
+    "welcome_stack_web": "web",
+    "welcome_after_web": " applications and ",
+    "welcome_stack_apis": "APIs",
+    "subtitle": "I build performant, secure, and scalable web solutions from front-end to back-end",
+    "contact_me": "Contact me!!",
+    "resume_me": "Resume me !!",
+    "status_first_segment": "Currently available for ",
+    "status_second_segment": "new projects"
+  },
+  "quotation": {
+    "content": "Science without religion is lame, religion without science is blind."
+  },
+  "skills": {
+    "title": "Skills",
+    "languages": "Languages",
+    "tools": "Tools",
+    "databases": "Databases",
+    "others": "Others"
+  },
+  "home": {
+    "about_title": "about-me",
+    "projects_title": "projects",
+    "about_p1": "Hello, I'm Jean de DIEU Yaba!",
+    "about_p2": "I'm a full-stack developer with over 3 years of experience, having started my career in back-end development before evolving into building complete, well-structured web solutions.",
+    "about_p3": "I design performant, secure, and user-focused web applications, with strong attention to architecture, maintainability, and code quality. Driven by continuous improvement, I keep learning and adapting to modern technologies to deliver reliable and scalable systems.",
+    "read_more": "View all",
+    "contact_content": "I’m interested in freelance opportunities. However, if you have other request or question, don’t hesitate to contact me",
+    "call_to_action": "Message me here"
+  },
+  "about": {
+    "first_sentence": "Who am it?",
+    "first_paragraph": "I am Jean de DIEU Yaba, a passionate full-stack developer with over 3 years of experience in crafting robust web applications. My journey began in back-end development, where I honed my skills in building scalable and efficient server-side solutions. Over time, I expanded my expertise to encompass full-stack development, allowing me to create comprehensive web solutions that are both user-friendly and technically sound.",
+    "second_paragraph": "My approach to development is centered around writing clean, maintainable code and adhering to best practices. I am proficient in a variety of programming languages and frameworks, which enables me to select the right tools for each project. I am committed to continuous learning and staying updated with the latest industry trends to ensure that my solutions are modern and effective.",
+    "third_paragraph": "Collaboration and communication are key aspects of my work ethic. I enjoy working closely with clients and team members to understand their needs and deliver solutions that exceed expectations. Whether it's developing a new feature, optimizing performance, or ensuring security, I am dedicated to delivering high-quality results that drive success.",
+    "fun_facts_title": "my-fun-facts",
+    "fun_facts_p1": "I’m hopeless at designing mockups from scratch",
+    "fun_facts_p2": "I do full-stack development but I prefer back-end work.",
+    "fun_facts_p3": "AI fascinates me, though I sometimes miss the human touch",
+    "fun_facts_p4": "I love dogs, even though I don’t have one",
+    "fun_facts_p5": "I treasure moments with family and friends"
+  },
+  "projects": {
+    "title": "projects",
+    "first_sentence": "List of my projects",
+    "first_subtitle": "complete-apps",
+    "second_subtitle": "small-projects"
+  },
+  "footer": {
+    "job_title": "Full-stack developer",
+    "first_segment_content": " Developed by ",
+    "second_segment_content": " and designed by "
+  }
 }

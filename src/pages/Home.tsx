@@ -4,9 +4,9 @@ import HeroSection from "../components/sections/HeroSection"
 import ProjectSection from "../components/sections/ProjectSection"
 import QuotationSection from "../components/sections/QuotationSection"
 import SkillSection from "../components/sections/SkillSection"
+import { useTranslation } from "react-i18next"
 
 import Button from "../components/ui/button"
-
 
 import Project1 from '../assets/images/projects/xora-saas-landing-page.jpg'
 import Project2 from '../assets/images/projects/projectx.png'
@@ -14,13 +14,14 @@ import Project3 from '../assets/images/projects/kahoot.png'
 
 import ImgAbout from '../assets/about-1.png'
 
-
 export default function Home() {
+    const { t } = useTranslation()
+
     return <>
             <main>
                 <HeroSection />
                 <QuotationSection />
-                <ProjectSection id="projects" className="row medium-square-right" title="projects" hasBar={true} hasMoreBtn={true}>
+                <ProjectSection id="projects" className="row medium-square-right" title={t('home.projects_title')} hasBar={true} hasMoreBtn={true}>
                     <div className="card grid__items">
                         <a href="#">
                             <img src={Project1} alt="Xora Saas landing Page" />
@@ -96,17 +97,11 @@ export default function Home() {
                 <AboutSection id="about">
                     <div className="section__body__content">
                         <div className="text__content">
-                            <p>Hello, i’m Jean de DIEU Yaba!</p>
-                            <p>
-                                I’m a full-stack developer with over 3 years of experience, having started my career in back-end 
-                                development before evolving into building complete, well-structured web solutions.
-                            </p>
-                            <p>
-                                I design performant, secure, and user-focused web applications, with strong attention to architecture, maintainability, and code quality.
-                                Driven by continuous improvement, I keep learning and adapting to modern technologies to deliver reliable and scalable systems.
-                            </p>
+                            <p>{t('home.about_p1')}</p>
+                            <p>{t('home.about_p2')}</p>
+                            <p>{t('home.about_p3')}</p>
                         </div>
-                        <Button url='/about' className='btn btn__about'>{"Read more ->"}</Button>
+                        <Button url='/about' className='btn btn__about'>{t('home.read_more')}</Button>
                     </div>
                     <div className="section__image">
                         <img src={ImgAbout} alt="section image" />

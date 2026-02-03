@@ -1,6 +1,9 @@
+import { useTranslation } from "react-i18next"
 import { Icons } from "../../icons"
 
 export default function ContactSection() {
+    const { t } = useTranslation()
+
     return (
         <section className="last_row" id="contact">
             <div className="section__title">
@@ -13,13 +16,13 @@ export default function ContactSection() {
                 <div className="section__body__content">
                     <div className="text__content">
                         <p>
-                            I’m interested in freelance opportunities. However, if you have other request or question, don’t hesitate to contact me
+                            {t('home.contact_content')}
                         </p>
                     </div>
                 </div>
                 <div className="section__image">
                     <div className="contact__infos">
-                        <p className="contact__infos__title">Message me here</p>
+                        <p className="contact__infos__title">{t('home.call_to_action')}</p>
                         <div className="contact__infos__content">
                             <a href="#" className="flex flex-row items-center"><img src={Icons.discord} alt="discord icon" />
                                 <span>!Elias#3519</span>
