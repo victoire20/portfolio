@@ -50,11 +50,17 @@
     "fun_facts_p4": "J'adore les chiens, même si je n'en ai pas",
     "fun_facts_p5": "Je chéris les moments passés avec ma famille et mes amis"
   },
-  "project": {
+  "projects": {
     "title": "projets",
     "first_sentence": "Liste de mes projets",
     "first_subtitle": "applications-completes",
     "second_subtitle": "petits-projets"
+  },
+  "contacts": {
+    "title": "",
+    "content": "",
+    "call_to_action": "Ecrivez-moi ici",
+    "subtitle": ""
   },
   "footer": {
     "job_title": "Développeur full-stack",

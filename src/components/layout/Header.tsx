@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { Icons } from '../../icons'
 import Button from '../ui/button'
-import Logo from '/Logo.png'
+import Logo from '/logof.png'
 import LanguageDropdown from '../ui/LanguageDropdown'
 import { useTranslation } from 'react-i18next'
 
@@ -34,7 +34,24 @@ export default function Header() {
 
     return (
         <header className="topbar">
-            <NavLink to="/" className="logo topbar__logo"><img src={Logo} alt="logo" />Elias</NavLink>
+            <NavLink to="/" className="logo topbar__logo">
+                <div className="
+                    font-display
+                    text-[160px]
+                    font-extrabold
+                    tracking-[-0.12em]
+                    bg-linear-to-br
+                    from-purple-300
+                    via-purple-400
+                    to-purple-500
+                    bg-clip-text
+                    text-transparent
+                    select-none
+                ">
+                    YJD
+                </div>
+                {/* <img src={Logo} alt="logo" />Elias */}
+            </NavLink>
             <nav className={isOpenMobileMenu ? "navbar open" : "navbar"}>
                 <ul className="navbar__links">
                     <li className={`navbar__link t_link ${pathname === '/' ? 'active' : ''}`}>

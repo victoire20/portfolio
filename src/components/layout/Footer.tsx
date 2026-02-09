@@ -8,7 +8,7 @@ export default function Footer() {
     const { t } = useTranslation()
 
     return (
-        <footer>
+        <footer className="text-[1rem]">
             <div className="container">
                 <div className="md:flex justify-between md:items-center footer__content">
                     <div>

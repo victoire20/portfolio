@@ -37,30 +37,31 @@ body {
 }
 
 .dflex {
-    display: flex;
+    /* display: flex;
     justify-content: center;
     align-items: center;
-    gap: 1.375rem;
+    gap: 1.375rem; */
 }
 
 .dflex img {
-    vertical-align: middle;
+    /* vertical-align: middle; */
 }
 
 .dflex a img {
-    opacity: 0.7;
+    /* opacity: 0.7; */
 }
 
 .dflex li:hover {
-    color: #fff;
+    /* color: #fff; */
 }
 
 .dflex li:hover img {
-    opacity: 1;
+    /* opacity: 1; */
 }
 
 .container {
-    max-width: 72.5rem;
+    /* max-width: 72.5rem; */
+    max-width: 1024px;
     padding: 0 1rem;
 }
 
@@ -396,7 +397,6 @@ body {
     }
 
     .container {
-        background: var(--bg-secondary);
         padding: 0 min(7%, 171px);
     }
 
@@ -507,6 +507,19 @@ body {
 
     .section__image {
         display: block;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .container {
+        padding: 0 1rem;
+    }
+}
+
+@media screen and (min-width: 1045px) {
+    .container {
+        background: var(--bg-secondary);
+        padding: 0;
     }
 }
 

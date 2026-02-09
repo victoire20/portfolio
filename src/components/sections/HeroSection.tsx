@@ -9,7 +9,7 @@ export default function HeroSection() {
 
     return (
         <section className="row hero" id="hero">
-            <div className="hero__content">
+            <div className="hero__content max-w-134.25 max-h-56.75">
                 <h1 className="hero__title">
                     {t('hero.welcome_before')}<span className="hero__stack"><span className="text__nowrap">full-stack</span>{t('hero.welcome_stack_suffix')}</span>{t('hero.welcome_middle')}<span className="hero__stack">{t('hero.welcome_stack_web')}</span>{t('hero.welcome_after_web')}<span className="hero__stack">{t('hero.welcome_stack_apis')}</span>
                 </h1>
@@ -21,9 +21,9 @@ export default function HeroSection() {
                     <Button className='btn' url='#' download>{t('hero.resume_me')}</Button>
                 </div>
             </div>
-            <div className="hero__image">
+            <div className="hero__image max-w-117.25 max-h-96.5">
                 <img src={HeroImg} alt="Hero Image" />
-                <div className="hero__website__status">
+                <div className="hero__website__status max-w-100.5 mx-auto">
                     <div className="hero__website__status__dot"></div>
                     <div>{t('hero.status_first_segment')}<span className="website__designation">{t('hero.status_second_segment')}</span></div>
                 </div>

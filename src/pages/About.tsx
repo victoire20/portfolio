@@ -12,15 +12,17 @@ export default function About() {
         <main>
             <PageHeaderSection title='about-me' content={t('about.first_sentence')} />
             <AboutSection>
-                <div className="section__body__content">
-                    <div className="text__content">
-                        <p>{t('about.first_paragraph')}</p>
-                        <p>{t('about.second_paragraph')}</p>
-                        <p>{t('about.third_paragraph')}</p>
+                <div className="section__body">
+                    <div className="section__body__content">
+                        <div className="text__content">
+                            <p>{t('about.first_paragraph')}</p>
+                            <p>{t('about.second_paragraph')}</p>
+                            <p>{t('about.third_paragraph')}</p>
+                        </div>
                     </div>
-                </div>
-                <div className="section__image">
-                    <img src={ImgAbout} alt="section image" />
+                    <div className="section__image">
+                        <img src={ImgAbout} alt="section image" />
+                    </div>
                 </div>
             </AboutSection>
 

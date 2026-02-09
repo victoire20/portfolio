@@ -8,5 +8,6 @@ export interface Project {
     liveUrl?: string
     githubUrl?: string
     isPrivate: boolean
+    maquette: Object
     isSmallProject: boolean
 }

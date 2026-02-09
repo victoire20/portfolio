@@ -22,6 +22,7 @@ import './i18n/index'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Router>
+      {/* <div className='max-w-290 px-4 pt-0 pb-0 md:bg-(--bg-secondary) md:px-[min(7%, 171px)] md:pt-0 md:pb-0 lg:mx-auto lg:mt-0 lg:mb-0'> */}
       <div className='container'>
         {/* Header réutilisé sur toutes les pages */}
         <Header />

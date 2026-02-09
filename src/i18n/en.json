@@ -56,6 +56,12 @@
     "first_subtitle": "complete-apps",
     "second_subtitle": "small-projects"
   },
+  "contacts": {
+    "title": "Don’t hesitate to get in touch!",
+    "content": "Open to freelance opportunities or any questions. Don’t hesitate to get in touch!",
+    "call_to_action": "Message me here",
+    "subtitle": "all-media"
+  },
   "footer": {
     "job_title": "Full-stack developer",
     "first_segment_content": " Developed by ",
