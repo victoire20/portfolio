@@ -3,10 +3,11 @@
     display: flex;
     flex-direction: column;
     max-width: max-content;
-    margin: 0 auto;
+    margin: 5rem auto 0 auto;
     margin-bottom: 3.125rem;
     font-size: 0.9rem;
     font-weight: var(--font-medium);
+    /* @apply relative flex flex-col max-w-max text-[0.9rem] font-[number:var(--font-medium)] mb-[3.125rem] mx-auto; */
 }
 
 .quotation::before {
