@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import FunFactImg from '../assets/my fun facts.png'
-import ImgAbout from '/grok_1767570622327.png'
+import ImgAbout from '../assets/profile.png'
 
 import AboutSection from '../components/sections/AboutSection'
 import PageHeaderSection from '../components/sections/PageHeaderSection'

@@ -18,7 +18,7 @@ export default function HeroSection() {
                 </p>
                 <div className="btn__group">                    
                     <Button className='btn' url='/contact'>{t('hero.contact_me')}</Button>
-                    <Button className='btn' url='#' download>{t('hero.resume_me')}</Button>
+                    {/* <Button className='btn' url='#' download>{t('hero.resume_me')}</Button> */}
                 </div>
             </div>
             <div className="hero__image max-w-117.25 max-h-96.5">
