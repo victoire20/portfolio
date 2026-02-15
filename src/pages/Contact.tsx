@@ -20,7 +20,6 @@ export default function Contact() {
                             <div className="contact__infos">
                             <p className="contact__infos__title">{t('contacts.call_to_action')}</p>
                             <div className="contact__infos__content">
-                                <a href="#" className="flex flex-row items-center"><img src={Icons.discord} alt="discord icon" /><span>!Elias#3519</span></a>
                                 <a href="mailto:gauisyaba@gmail.com" className="flex flex-row items-center">
                                     <img src={Icons.email} alt="email icon" /><span>gauisyaba@gmail.com</span>
                                 </a>
@@ -42,11 +41,11 @@ export default function Contact() {
                             <div className="flex items-center justify-center gap-5.5">
                                 <a href="#" className="flex opacity-[0.7] hover:opacity-[1] hover:text-white">
                                     <img className="align-middle" src={Icons.twitter} alt="twitter icon" />
-                                    <span className="">@elias</span>
+                                    <span className="">@yjd</span>
                                 </a>
                                 <a href="#" className="flex opacity-[0.7] hover:opacity-[1] hover:text-white">
                                     <img className="align-middle" src={Icons.twitter} alt="twitter icon" />
-                                    <span className="">@elias</span>
+                                    <span className="">@yjd</span>
                                 </a>
                             </div>
                         {/* </div> */}

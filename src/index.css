@@ -381,6 +381,7 @@ body {
 
 .fact__item {
     border: 1px solid var(--gray-soft);
+    line-height: 1.4;
     text-wrap: wrap;
     padding: 8px;
 }
@@ -430,7 +431,7 @@ body {
 
 @media screen and (min-width: 690px) {
     .fact__item {
-        text-wrap: nowrap;
+        /* text-wrap: nowrap; */
     }
 }
 

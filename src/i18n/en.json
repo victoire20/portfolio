@@ -44,11 +44,10 @@
     "second_paragraph": "My approach to development is centered around writing clean, maintainable code and adhering to best practices. I am proficient in a variety of programming languages and frameworks, which enables me to select the right tools for each project. I am committed to continuous learning and staying updated with the latest industry trends to ensure that my solutions are modern and effective.",
     "third_paragraph": "Collaboration and communication are key aspects of my work ethic. I enjoy working closely with clients and team members to understand their needs and deliver solutions that exceed expectations. Whether it's developing a new feature, optimizing performance, or ensuring security, I am dedicated to delivering high-quality results that drive success.",
     "fun_facts_title": "my-fun-facts",
-    "fun_facts_p1": "I’m hopeless at designing mockups from scratch",
-    "fun_facts_p2": "I do full-stack development but I prefer back-end work.",
-    "fun_facts_p3": "AI fascinates me, though I sometimes miss the human touch",
-    "fun_facts_p4": "I love dogs, even though I don’t have one",
-    "fun_facts_p5": "I treasure moments with family and friends"
+    "fun_facts_p2": "I do full-stack development 💻 but I prefer back-end work ⚙️",
+    "fun_facts_p3": "AI fascinates me 🤖, though I sometimes miss the human touch 🤝",
+    "fun_facts_p4": "I love dogs 🐶, even though I don’t have one yet 🦴",
+    "fun_facts_p5": "I treasure moments with family and friends ❤️✨"
   },
   "projects": {
     "title": "projects",

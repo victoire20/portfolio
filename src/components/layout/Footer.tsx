@@ -15,7 +15,7 @@ export default function Footer() {
                         <div className="flex mb-4 gap-6">
                             <a href="#" className="flex items-center gap-[0.563rem]">
                                 <img className='w-4 h-4' src={Logo} alt="footer logo" />
-                                <span className='text-white font-(--font-medium)'>Elias</span>
+                                <span className='text-white font-(--font-medium)'>YJD</span>
                             </a>
                             <span>gauisyaba@gmail.com</span>
                         </div>
@@ -27,8 +27,6 @@ export default function Footer() {
                         <h4 className='mb-75 font-(--font-medium) f-h4 text-white'>Media</h4>
                         <div className="flex gap-[0.688rem]">
                             <a className='hover:scale-[1.3]' href="https://github.com/victoire20" target="_blank"><img className='opacity-70 hover:opacity-100 w-5 h-5' src={Icons.github} alt="github icon" /></a>
-                            <a className='hover:scale-[1.3]' href="#"><img className='opacity-70 hover:opacity-100 w-5 h-5' src={Icons.dribble} alt="dribble icon" /></a>
-                            <a className='hover:scale-[1.3]' href="#"><img className='opacity-70 hover:opacity-100 w-5 h-5' src={Icons.discord} alt="discord icon" /></a>
                         </div>
                     </div>
                 </div>

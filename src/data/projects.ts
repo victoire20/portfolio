@@ -8,7 +8,7 @@ export const projects: Project[] = [
         skills: ["HTML", "CSS", "React JS", "Tailwind CSS", "Vercel"],
         cover: "/images/projects/xora-saas-landing-page.jpg",
         isPrivate: false,
-        liveUrl: "https://portfolio-eight-dun-30.vercel.app",
+        liveUrl: "https://xora-saas-landing-page-hjwt06kpm.vercel.app",
         githubUrl: "https://github.com/victoire20/xora-saas-landing-page",
         maquette: {
             support: null,
@@ -36,9 +36,9 @@ export const projects: Project[] = [
         title: "Portfolio",
         description: "You’re using it rn",
         skills: ["React", "CSS", "TypeScript"],
-        cover: "/images/projects/portfolio.png",
+        cover: "/images/projects/portfolio.jpg",
         isPrivate: false,
-        liveUrl: "portfolio-eight-dun-30.vercel.app",
+        liveUrl: "https://portfolio-eight-dun-30.vercel.app",
         githubUrl: "https://github.com/victoire20/portfolio",
         maquette: {
             support: null,

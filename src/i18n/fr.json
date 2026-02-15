@@ -8,7 +8,7 @@
   "hero": {
     "welcome_before": "Je suis un ",
     "welcome_stack_suffix": " développeur",
-    "welcome_middle": " specialise dans les applications ",
+    "welcome_middle": " specialisé dans les applications ",
     "welcome_stack_web": "web",
     "welcome_after_web": " et les ",
     "welcome_stack_apis": "API",
@@ -44,11 +44,10 @@
     "second_paragraph": "Mon approche du développement est centrée sur l'écriture d'un code propre et maintenable, en respectant les meilleures pratiques. Je maîtrise une variété de langages de programmation et de frameworks, ce qui me permet de choisir les bons outils pour chaque projet. Je m'engage à apprendre continuellement et à rester à jour avec les dernières tendances de l'industrie afin de garantir que mes solutions soient modernes et efficaces.",
     "third_paragraph": "La collaboration et la communication sont des aspects clés de mon éthique de travail. J'apprécie de travailler en étroite collaboration avec les clients et les membres de l'équipe pour comprendre leurs besoins et fournir des solutions qui dépassent les attentes. Qu'il s'agisse de développer une nouvelle fonctionnalité, d'optimiser les performances ou d'assurer la sécurité, je suis dédié à fournir des résultats de haute qualité qui favorisent le succès.",
     "fun_facts_title": "mes-anecdotes-amusantes",
-    "fun_facts_p1": "Je suis nul pour concevoir des maquettes à partir de zéro",
-    "fun_facts_p2": "Je fais du développement full-stack, mais je préfère le travail en back-end",
-    "fun_facts_p3": "L'IA me fascine, même si parfois, le côté humain me manque",
-    "fun_facts_p4": "J'adore les chiens, même si je n'en ai pas",
-    "fun_facts_p5": "Je chéris les moments passés avec ma famille et mes amis"
+    "fun_facts_p2": "Je fais du développement full-stack 💻, mais je préfère le travail en back-end ⚙️",
+    "fun_facts_p3": "L'IA me fascine 🤖, même si parfois le côté humain me manque 🤝",
+    "fun_facts_p4": "J'adore les chiens 🐶, même si je n'en ai pas encore 🦴",
+    "fun_facts_p5": "Je chéris les moments passés avec ma famille et mes amis ❤️✨"
   },
   "projects": {
     "title": "projets",
@@ -57,10 +56,10 @@
     "second_subtitle": "petits-projets"
   },
   "contacts": {
-    "title": "",
-    "content": "",
+    "title": "N'hésitez pas à me contacter !",
+    "content": "Ouvert à toute opportunité de travail en freelance ou à toute question. N'hésitez pas à me contacter !",
     "call_to_action": "Ecrivez-moi ici",
-    "subtitle": ""
+    "subtitle": "mes-médias"
   },
   "footer": {
     "job_title": "Développeur full-stack",

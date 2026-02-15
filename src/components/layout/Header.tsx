@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { Icons } from '../../icons'
 import Button from '../ui/button'
-import Logo from '/logof.png'
+import Logo from '/Logo.png'
 import LanguageDropdown from '../ui/LanguageDropdown'
 import { useTranslation } from 'react-i18next'
 
@@ -34,23 +34,8 @@ export default function Header() {
 
     return (
         <header className="topbar">
-            <NavLink to="/" className="logo topbar__logo">
-                <div className="
-                    font-display
-                    text-[160px]
-                    font-extrabold
-                    tracking-[-0.12em]
-                    bg-linear-to-br
-                    from-purple-300
-                    via-purple-400
-                    to-purple-500
-                    bg-clip-text
-                    text-transparent
-                    select-none
-                ">
-                    YJD
-                </div>
-                {/* <img src={Logo} alt="logo" />Elias */}
+            <NavLink to="/" className="flex flex-row items-center gap-2 text-[1rem] topbar__logo">
+                <img className='w-4 h-4' src={Logo} alt="logo" />YJD Labs
             </NavLink>
             <nav className={isOpenMobileMenu ? "navbar open" : "navbar"}>
                 <ul className="navbar__links">
@@ -77,12 +62,6 @@ export default function Header() {
                     <li className="navbar__social__media">
                         <a href="https://github.com/victoire20" target="_blank" className="social__media__icon">
                             <img src={Icons.github} alt="github icon" />
-                        </a>
-                        <a href="#" className="social__media__icon">
-                            <img src={Icons.dribble} alt="dribble icon" />
-                        </a>
-                        <a href="#" className="social__media__icon">
-                            <img src={Icons.figmat} alt="figmat icon" />
                         </a>
                     </li>
                 </ul>

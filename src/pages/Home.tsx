@@ -10,7 +10,6 @@ import ProjectCard from "../components/card/ProjectCard"
 
 import Button from "../components/ui/button"
 
-// import ImgAbout from '../assets/about-1.png'
 import ImgAbout from '/grok_1767570622327.png'
 // import ImgAbout from '/grok_1767570627026.png'
 // import ImgAbout from '/grok_1767570668919.png'

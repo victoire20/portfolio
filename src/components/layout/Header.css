@@ -3,19 +3,6 @@
     @apply flex flex-row justify-between items-center w-full box-border overflow-hidden;
 }
 
-.logo {
-    /* gap: 0.5rem;
-    font-size: 1rem; */
-    /* font-weight: var(--font-bold); */
-
-    @apply flex flex-row items-center gap-[0.5rem] text-[1rem];
-}
-
-.logo img {
-    width: 1rem;
-    height: 1rem;
-}
-
 .topbar__logo {
     color: #fff;
     z-index: 10;
@@ -37,16 +24,18 @@
 }
 
 .navbar__links {
-    display: flex;
+    /* display: flex;
     flex-direction: column;
     align-items: start;
     gap: 2rem;
     color: var(--gray-soft);
     font-weight: var(--font-regular);
-    font-size: 2rem;
+    font-size: 2rem; */
     transition: height 220ms ease, opacity 180ms ease;
     will-change: height, opacity;
     padding-top: 5.4rem;
+
+    @apply flex flex-col items-start gap-[2rem] text-(--gray-soft) text-(--font-regular) text-[2rem];
 }
 
 .navbar__link.active,

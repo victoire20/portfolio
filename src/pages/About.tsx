@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import FunFactImg from '../assets/my fun facts.png'
-import ImgAbout from '../assets/about-1.png'
+import ImgAbout from '/grok_1767570622327.png'
 
 import AboutSection from '../components/sections/AboutSection'
 import PageHeaderSection from '../components/sections/PageHeaderSection'
@@ -11,7 +11,7 @@ export default function About() {
     return <>
         <main>
             <PageHeaderSection title='about-me' content={t('about.first_sentence')} />
-            <AboutSection>
+            <AboutSection hasTitle={false}>
                 <div className="section__body">
                     <div className="section__body__content">
                         <div className="text__content">
@@ -20,7 +20,7 @@ export default function About() {
                             <p>{t('about.third_paragraph')}</p>
                         </div>
                     </div>
-                    <div className="section__image">
+                    <div className="section__image max-w-85.75 max-h-127">
                         <img src={ImgAbout} alt="section image" />
                     </div>
                 </div>
@@ -78,8 +78,7 @@ export default function About() {
                     </div>
                 </div>
                 <div className="section__body section__fact">
-                    <div className="line__div fun__fact">
-                        <div className="fact__item">{t('about.fun_facts_p1')}</div>
+                    <div className="line__div fun__fact max-w-[605px]">
                         <div className="fact__item">{t('about.fun_facts_p2')}</div>
                         <div className="fact__item">{t('about.fun_facts_p3')}</div>
                         <div className="fact__item">{t('about.fun_facts_p4')}</div>

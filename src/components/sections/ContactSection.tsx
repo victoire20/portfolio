@@ -24,9 +24,6 @@ export default function ContactSection() {
                     <div className="contact__infos">
                         <p className="contact__infos__title">{t('home.call_to_action')}</p>
                         <div className="contact__infos__content">
-                            <a href="#" className="flex flex-row items-center"><img src={Icons.discord} alt="discord icon" />
-                                <span>!Elias#3519</span>
-                            </a>
                             <a href="mailto:gauisyaba@gmail.com" className="flex flex-row items-center"><img src={Icons.email} alt="email icon" />
                                 <span>gauisyaba@gmail.com</span>
                             </a>
