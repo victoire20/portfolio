@@ -11,7 +11,7 @@ export default function Projects() {
     const { t } = useTranslation()
 
     return <>
-        <main>
+        <main className='container'>
             <PageHeaderSection title={t('projects.title')} content={t('projects.first_sentence')} />
 
             <ProjectSection id='projects' className='row' title={t('projects.first_subtitle')} hasBar={false} hasMoreBtn={false}>                

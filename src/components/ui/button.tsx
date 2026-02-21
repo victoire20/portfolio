@@ -1,4 +1,5 @@
 import type { AnchorHTMLAttributes, ReactNode } from 'react'
+import { NavLink } from 'react-router-dom'
 
 
 type ButtonProps = {
@@ -7,12 +8,12 @@ type ButtonProps = {
 } & AnchorHTMLAttributes<HTMLAnchorElement>
 
 export default function Button({ url, children, className, download, ...props }: ButtonProps) {
-    return <a
-      href={url}
+    return <NavLink
+      to={url}
       className={className}
       download={download ? true : undefined}
       {...props}
     >
       {children}
-    </a>
+    </NavLink>
 }

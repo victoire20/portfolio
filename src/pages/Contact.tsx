@@ -7,7 +7,7 @@ export default function Contact() {
     const { t } = useTranslation()
 
     return <>
-        <main>
+        <main className="container">
             <PageHeaderSection title='contacts' content={t('contacts.title')} />
             <AboutSection id="about" hasTitle={false}>
                 <div className="flex justify-between gap-8">
@@ -39,13 +39,9 @@ export default function Contact() {
                     <div className="section__body__content">
                         {/* <div className="text__content"> */}
                             <div className="flex items-center justify-center gap-5.5">
-                                <a href="#" className="flex opacity-[0.7] hover:opacity-[1] hover:text-white">
-                                    <img className="align-middle" src={Icons.twitter} alt="twitter icon" />
-                                    <span className="">@yjd</span>
-                                </a>
-                                <a href="#" className="flex opacity-[0.7] hover:opacity-[1] hover:text-white">
-                                    <img className="align-middle" src={Icons.twitter} alt="twitter icon" />
-                                    <span className="">@yjd</span>
+                                <a href="https://dev.to/jeanldtech" target="_blank" className="flex gap-1 items-center opacity-[0.7] hover:opacity-[1] hover:text-white">
+                                    <img className="align-middle" src={Icons.devto} alt="devto icon" />
+                                    <span>@jeanldtech</span>
                                 </a>
                             </div>
                         {/* </div> */}

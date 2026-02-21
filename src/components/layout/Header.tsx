@@ -33,7 +33,7 @@ export default function Header() {
     }, [isOpenMobileMenu])
 
     return (
-        <header className="topbar">
+        <header className="container topbar">
             <NavLink to="/" className="flex flex-row items-center gap-2 text-[1rem] topbar__logo">
                 <img className='w-4 h-4' src={Logo} alt="logo" />YJD Labs
             </NavLink>
@@ -65,7 +65,6 @@ export default function Header() {
                         </a>
                     </li>
                 </ul>
-                {/* <h1>{t('Welcome to React')}</h1> */}
             </nav>
             <div className="sandwitch__btn">
                 <Button url='#'>

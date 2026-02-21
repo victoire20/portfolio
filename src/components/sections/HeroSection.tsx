@@ -16,7 +16,7 @@ export default function HeroSection() {
                 <p className="hero__description">
                     {t('hero.subtitle')}
                 </p>
-                <div className="btn__group">                    
+                <div className="btn__group">
                     <Button className='btn' url='/contact'>{t('hero.contact_me')}</Button>
                     {/* <Button className='btn' url='#' download>{t('hero.resume_me')}</Button> */}
                 </div>

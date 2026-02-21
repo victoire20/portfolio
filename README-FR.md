@@ -76,8 +76,6 @@ src/
 |-- components/   # Composants reutilisables
 |   |-- card/
 |   |   |-- ProjectCard.tsx
-|   |   |-- ProjectGallery.tsx
-|   |   `-- SkillBadge.tsx
 |   |-- layout/
 |   |   |-- Footer.tsx / Footer.css
 |   |   `-- Header.tsx / Header.css
@@ -118,8 +116,6 @@ src/
 |   |-- funFact.ts
 |   |-- project.ts
 |   `-- skill.ts
-|-- App.css
-|-- App.tsx
 |-- index.css
 |-- main.tsx
 `-- reset.css

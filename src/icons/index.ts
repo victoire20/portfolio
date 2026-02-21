@@ -4,6 +4,7 @@ import GithubIcon from '../assets/icons/github.png'
 import EmailIcon from '../assets/icons/email.png'
 import SandwitchIcon from '../assets/icons/sandwitch.png'
 import TwitterIcon from '../assets/icons/twitter.png'
+import DevToIcon from '../assets/icons/dev-to.png'
 import CloseIcon from '../assets/icons/close.png'
 import QuoteIcon from '../assets/icons/quote.png'
 
@@ -15,6 +16,7 @@ export const Icons = {
     email: EmailIcon,
     sandwitch: SandwitchIcon,
     twitter: TwitterIcon,
+    devto: DevToIcon,
     close: CloseIcon,
     quote: QuoteIcon
 }

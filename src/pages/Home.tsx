@@ -16,7 +16,7 @@ export default function Home() {
     const { t } = useTranslation()
 
     return <>
-            <main>
+            <main className="container">
                 <HeroSection />
                 <QuotationSection />
                 <ProjectSection id="projects" className="row medium-square-right" title={t('home.projects_title')} hasBar={true} hasMoreBtn={true}>
@@ -24,7 +24,7 @@ export default function Home() {
                 </ProjectSection>
                 <SkillSection />
                 <AboutSection hasBar={true}>
-                    <div className="section__body">
+                    <div className="flex flex-col-reverse md:flex-row lg:justify-between lg:items-center gap-8">
                         <div className="section__body__content">
                             <div className="text__content">
                                 <p>{t('home.about_p1')}</p>
@@ -33,8 +33,12 @@ export default function Home() {
                             </div>
                             <Button url='/about' className='btn btn__about'>{t('home.read_more')}</Button>
                         </div>
-                        <div className="section__image max-w-84.75 max-h-126.75">
-                            <img src={ImgAbout} alt="section image" />
+                        <div className="mb-8 flex justify-center md:block">
+                            <img
+                                src={ImgAbout}
+                                alt="section image"
+                                className="w-auto h-auto max-w-84.75 max-h-126.75"
+                            />
                         </div> 
                     </div>                   
                 </AboutSection>

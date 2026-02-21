@@ -9,7 +9,7 @@ export default function About() {
     const { t } = useTranslation()
 
     return <>
-        <main>
+        <main className='container'>
             <PageHeaderSection title='about-me' content={t('about.first_sentence')} />
             <AboutSection hasTitle={false}>
                 <div className="section__body">
