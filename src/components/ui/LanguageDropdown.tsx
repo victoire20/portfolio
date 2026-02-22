@@ -11,7 +11,7 @@ type LanguageDropdownProps = {
 }
 
 
-export default function LanguageDropdown({ isOpen, onOpenChange }: LanguageDropdownProps) {
+export default function LanguageDropdown({ isOpen = false, onOpenChange }: LanguageDropdownProps) {
     const { i18n } = useTranslation()
     let currentLang = i18n.language?.toLowerCase().startsWith('fr') ? 'FR' : 'EN'
 
@@ -41,7 +41,7 @@ export default function LanguageDropdown({ isOpen, onOpenChange }: LanguageDropd
             <img
                 className="language__icon"
                 src={isOpen ? Icons.dropup : Icons.dropdown}
-                alt=""
+                alt={isOpen ? "dropup icon" : "dropdown icon"}
             />
         </div>
 
@@ -49,11 +49,10 @@ export default function LanguageDropdown({ isOpen, onOpenChange }: LanguageDropd
             className={`language__selector__content ${isOpen ? 'open' : ''}`}
             role="listbox"
         >
-            <li>
+            <li role="option">
                 {currentLang !== 'EN' ? (
                     <button
                         type="button"
-                        role="option"
                         aria-selected={true}
                         onClick={() => handleChange('en')}
                     >
@@ -62,7 +61,6 @@ export default function LanguageDropdown({ isOpen, onOpenChange }: LanguageDropd
                 ) : (
                    <button
                         type="button"
-                        role="option"
                         aria-selected={true}
                         onClick={() => handleChange('fr')}
                     >
