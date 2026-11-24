@@ -11,9 +11,8 @@ export default function Projects() {
     const { t } = useTranslation()
 
     return <>
-        <main className='container'>
+        <main className='container page-decor page-decor--projects'>
             <PageHeaderSection title={t('projects.title')} content={t('projects.first_sentence')} />
-
             <ProjectSection id='projects' className='row' title={t('projects.first_subtitle')} hasBar={false} hasMoreBtn={false}>                
                 {projects.map((project) => !project.isSmallProject && <ProjectCard key={project.id} data={project} />)}
             </ProjectSection>

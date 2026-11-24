@@ -7,7 +7,7 @@ export default function Contact() {
     const { t } = useTranslation()
 
     return <>
-        <main className="container">
+        <main className="container page-decor page-decor--contact">
             <PageHeaderSection title='contacts' content={t('contacts.title')} />
             <AboutSection id="about" hasTitle={false}>
                 <div className="flex justify-between gap-8">

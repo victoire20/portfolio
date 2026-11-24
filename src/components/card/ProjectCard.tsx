@@ -1,12 +1,13 @@
 import Button from "../ui/button"
+import type { Project } from "../../types/project"
 
 
-const ImageCard = ({ data }) => (
+const ImageCard = ({ data }: { data: Project }) => (
     data.liveUrl ? (<a href={data.liveUrl}><img src={data.cover} alt={data.title} /></a>) : (<img src={data.cover} alt={data.title} />)
 )
 
 
-const ProjectCard = ({ data }) => {
+const ProjectCard = ({ data }: { data: Project }) => {
     return (<div className="card grid__items">
         {!data.isSmallProject && <ImageCard data={data} />} 
         <h3 className="card__title">

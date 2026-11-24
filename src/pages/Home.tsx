@@ -16,7 +16,7 @@ export default function Home() {
     const { t } = useTranslation()
 
     return <>
-            <main className="container">
+            <main className="container page-decor page-decor--home">
                 <HeroSection />
                 <QuotationSection />
                 <ProjectSection id="projects" className="row medium-square-right" title={t('home.projects_title')} hasBar={true} hasMoreBtn={true}>

@@ -42,6 +42,23 @@ body {
     padding: 0 1rem;
 }
 
+.page-decor {
+    position: relative;
+    isolation: isolate;
+}
+
+.page-decor::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
 /* Désactive scroll (sera ajouté par JS) */
 .no-scroll {
     overflow: hidden;
@@ -367,6 +384,31 @@ body {
 @media screen and (min-width: 650px) {
     body {
         background-color: var(--bg-primary);
+    }
+
+    .page-decor--home::before {
+        background: url("/background/bg-home.png") center top / 100% auto no-repeat;
+    }
+
+    .page-decor--about::before {
+        background: url("/background/bg-about.png") center top / 100% auto no-repeat;
+    }
+
+    .page-decor--projects::before {
+        background: url("/background/bg-projects.png") center top / 100% auto no-repeat;
+    }
+
+    .page-decor--contact::before {
+        background-image:
+            url("/background/bg-square-point.png"),
+            url("/background/bg-sqaure-fill-small.png"),
+            url("/background/bg-square-point.png");
+        background-repeat: no-repeat;
+        background-size: 5rem 6.438rem, 4.25rem 4.75rem, 5rem 6.438rem;
+        background-position:
+            left 1.5rem top 17rem,
+            right -2.125rem top 7rem,
+            right 0 bottom 0;
     }
 
     .container {
