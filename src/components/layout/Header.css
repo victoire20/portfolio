@@ -1,6 +1,8 @@
 .topbar {
+    position: relative;
+    z-index: 20;
     @apply pt-[32px] pb-[8px];
-    @apply flex flex-row justify-between items-center w-full box-border overflow-hidden;
+    @apply flex flex-row justify-between items-center w-full box-border;
 }
 
 .topbar__logo {
@@ -109,8 +111,13 @@
         position: static;
         height: auto;
         opacity: 1;
+        overflow: visible;
         padding: 0;
         background: transparent;
+    }
+
+    .topbar {
+        overflow: visible;
     }
 
     .navbar__links {
