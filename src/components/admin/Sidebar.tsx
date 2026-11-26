@@ -6,7 +6,7 @@ type SidebarProps = {
   onToggle: () => void
 }
 
-type IconName = 'grid' | 'folder' | 'chart' | 'settings' | 'chevron' | 'briefcase'
+type IconName = 'grid' | 'folder' | 'chart' | 'settings' | 'chevron' | 'briefcase' | 'tags' | 'target'
 
 function Icon({ name }: { name: IconName }) {
   const paths: Record<IconName, ReactNode> = {
@@ -14,6 +14,8 @@ function Icon({ name }: { name: IconName }) {
     folder: <><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><path d="M3 10h18" /></>,
     chart: <><path d="M3 3v18h18" /><path d="m19 9-5 5-4-4-5 5" /></>,
     settings: <><circle cx="12" cy="12" r="3" /><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.7a8 8 0 0 1-1.7 1l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.7-1l-1.7.7-1.4-2.4 1.4-1.1a7 7 0 0 1 0-2l-1.4-1.1 1.4-2.4 1.7.7a8 8 0 0 1 1.7-1l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.7 1l1.7-.7 1.4 2.4-1.4 1.1a7 7 0 0 1 0 2Z" /></>,
+    tags: <><path d="m20.6 13.4-7.2 7.2a2 2 0 0 1-2.8 0l-7.2-7.2a2 2 0 0 1 0-2.8l7.2-7.2a2 2 0 0 1 1.4-.6H20v8a2 2 0 0 1-.6 1.4Z" /><circle cx="16" cy="8" r="1" /></>,
+    target: <><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1" /></>,
     chevron: <path d="m9 18 6-6-6-6" />,
     briefcase: <><rect x="3" y="7" width="18" height="14" rx="2" /><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v2h4v-2" /></>,
   }
@@ -37,6 +39,8 @@ function Icon({ name }: { name: IconName }) {
 const navigation = [
   { label: 'Overview', icon: 'grid' as const, path: '/admin' },
   { label: 'Projects', icon: 'folder' as const, path: '/admin/projects' },
+  { label: 'Project types', icon: 'tags' as const, path: '/admin/project-types' },
+  { label: 'Targets', icon: 'target' as const, path: '/admin/targets' },
   { label: 'Analytics', icon: 'chart' as const, path: '/admin/analytics' },
   { label: 'Settings', icon: 'settings' as const, path: '/admin/settings' },
 ]

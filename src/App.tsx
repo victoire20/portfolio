@@ -9,6 +9,8 @@ import Contact from './pages/Contact'
 import AdminIndex from './pages/admin/Index'
 import AdminProjects from './pages/admin/Projects'
 import NewProject from './pages/admin/NewProject'
+import ProjectTypes from './pages/admin/ProjectTypes'
+import Targets from './pages/admin/Targets'
 import Login from './pages/admin/Login'
 import NotFound from './pages/NotFound'
 import AdminNotFound from './pages/admin/NotFound'
@@ -28,6 +30,8 @@ export default function App() {
         <Route path="/admin" element={<AdminIndex />} />
         <Route path="/admin/projects" element={<AdminProjects />} />
         <Route path="/admin/projects/new" element={<NewProject />} />
+        <Route path="/admin/project-types" element={<ProjectTypes />} />
+        <Route path="/admin/targets" element={<Targets />} />
         <Route path="/admin/login" element={<Login />} />
         <Route path="*" element={isAdminRoute ? <AdminNotFound /> : <NotFound />} />
       </Routes>
