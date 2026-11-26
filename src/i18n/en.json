@@ -65,5 +65,10 @@
     "job_title": "Full-stack developer",
     "first_segment_content": " Developed by ",
     "second_segment_content": " and designed by "
+  },
+  "not_found": {
+    "title": "Page not found",
+    "message": "The page you are looking for doesn't exist or has been moved.",
+    "back_home": "Back to home"
   }
 }

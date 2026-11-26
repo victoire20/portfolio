@@ -65,5 +65,10 @@
     "job_title": "Développeur full-stack",
     "first_segment_content": " Code par ",
     "second_segment_content": " design par "
+  },
+  "not_found": {
+    "title": "Page introuvable",
+    "message": "La page que vous recherchez n'existe pas ou a été déplacée.",
+    "back_home": "Retour à l'accueil"
   }
 }

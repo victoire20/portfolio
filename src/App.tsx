@@ -8,6 +8,8 @@ import Projects from './pages/Projects'
 import Contact from './pages/Contact'
 import AdminIndex from './pages/admin/Index'
 import Login from './pages/admin/Login'
+import NotFound from './pages/NotFound'
+import AdminNotFound from './pages/admin/NotFound'
 
 export default function App() {
   const { pathname } = useLocation()
@@ -23,6 +25,7 @@ export default function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/admin" element={<AdminIndex />} />
         <Route path="/admin/login" element={<Login />} />
+        <Route path="*" element={isAdminRoute ? <AdminNotFound /> : <NotFound />} />
       </Routes>
       {!isAdminRoute && (
         <>
