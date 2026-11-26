@@ -356,31 +356,21 @@ export default function ProjectCatalogPage({
                 <tbody>
                   {visibleItems.map((item) => (
                     <tr key={item.id}>
-                      {contentOnly ? (
-                        <td className="catalog-table__content-translations">
-                          {([
-                            { code: 'fr', language: 'Français', flag: '🇫🇷', content: item.translations?.fr.label || item.label },
-                            { code: 'en', language: 'English', flag: '🇬🇧', content: item.translations?.en.label ?? '' },
-                          ] as const)
-                            .filter((translation) => translation.content.trim())
-                            .map((translation) => (
-                              <div className="catalog-table__content-translation" key={translation.code}>
-                                <span
-                                  className="catalog-table__language-badge"
-                                  aria-label={translation.language}
-                                  title={translation.language}
-                                >
-                                  {translation.flag}
-                                </span>
-                                <span>{translation.content}</span>
-                              </div>
-                            ))}
-                        </td>
-                      ) : (
-                        <td className="catalog-table__label">{getLocalizedText(item, i18n.language, showTranslations).label}</td>
-                      )}
+                      <td className={showTranslations
+                        ? 'catalog-table__translations'
+                        : 'catalog-table__label'}>
+                        {showTranslations
+                          ? <TranslationLines item={item} field="label" />
+                          : getLocalizedText(item, i18n.language, false).label}
+                      </td>
                       {showDescription && (
-                        <td className="catalog-table__description">{getLocalizedText(item, i18n.language, showTranslations).description}</td>
+                        <td className={showTranslations
+                          ? 'catalog-table__translations'
+                          : 'catalog-table__description'}>
+                          {showTranslations
+                            ? <TranslationLines item={item} field="description" />
+                            : getLocalizedText(item, i18n.language, false).description}
+                        </td>
                       )}
                       {categories && <td>{item.type}</td>}
                       {showStatus && <td>
@@ -647,4 +637,45 @@ function getLocalizedText(item: CatalogItem, language: string, showTranslations:
     label: translated?.label.trim() || item.label,
     description: translated?.description || item.description,
   }
+}
+
+function TranslationLines({
+  item,
+  field,
+}: {
+  item: CatalogItem
+  field: 'label' | 'description'
+}) {
+  const translations = [
+    {
+      code: 'fr',
+      language: 'Français',
+      flag: '🇫🇷',
+      content: item.translations?.fr[field]
+        || (field === 'label' ? item.label : item.description),
+    },
+    {
+      code: 'en',
+      language: 'English',
+      flag: '🇬🇧',
+      content: item.translations?.en[field] ?? '',
+    },
+  ]
+
+  return (
+    <>
+      {translations.filter(({ content }) => content.trim()).map((translation) => (
+        <div className="catalog-table__translation" key={translation.code}>
+          <span
+            className="catalog-table__language-badge"
+            aria-label={translation.language}
+            title={translation.language}
+          >
+            {translation.flag}
+          </span>
+          <span>{translation.content}</span>
+        </div>
+      ))}
+    </>
+  )
 }

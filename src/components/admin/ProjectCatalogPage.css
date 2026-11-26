@@ -191,11 +191,11 @@
   font-weight: 500;
 }
 
-.catalog-table__content-translations {
+.catalog-table__translations {
   min-width: 18rem;
 }
 
-.catalog-table__content-translation {
+.catalog-table__translation {
   display: flex;
   align-items: flex-start;
   gap: 0.5rem;
