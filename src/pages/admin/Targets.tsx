@@ -11,7 +11,8 @@ const targets: CatalogItem[] = [
 ]
 
 export default function Targets() {
-  const { items, loading, error } = useSupabaseCatalog('targets', targets[0]?.status)
+  const { items, loading, error, createItem, updateItem, setItemActive, deleteItem } =
+    useSupabaseCatalog('targets', targets[0]?.status)
 
   return (
     <ProjectCatalogPage
@@ -21,6 +22,10 @@ export default function Targets() {
       initialItems={items}
       loading={loading}
       loadError={error}
+      onCreate={createItem}
+      onUpdate={updateItem}
+      onSetActive={setItemActive}
+      onDelete={deleteItem}
     />
   )
 }

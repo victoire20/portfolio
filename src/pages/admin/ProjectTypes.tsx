@@ -2,7 +2,8 @@ import ProjectCatalogPage from '../../components/admin/ProjectCatalogPage'
 import useSupabaseCatalog from '../../hooks/useSupabaseCatalog'
 
 export default function ProjectTypes() {
-  const { items, loading, error } = useSupabaseCatalog('project_types')
+  const { items, loading, error, createItem, updateItem, setItemActive, deleteItem } =
+    useSupabaseCatalog('project_types')
 
   return (
     <ProjectCatalogPage
@@ -12,6 +13,10 @@ export default function ProjectTypes() {
       initialItems={items}
       loading={loading}
       loadError={error}
+      onCreate={createItem}
+      onUpdate={updateItem}
+      onSetActive={setItemActive}
+      onDelete={deleteItem}
     />
   )
 }

@@ -263,6 +263,11 @@
   background: #f4f4f5;
 }
 
+.catalog-table__menu button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
 .catalog-table__menu .catalog-table__menu-delete {
   color: #dc2626;
 }

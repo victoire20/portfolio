@@ -3,6 +3,9 @@ import type { CatalogItem, CatalogStatus } from '../components/admin/ProjectCata
 
 type CatalogTable = 'targets' | 'project_types'
 
+type CatalogCreateInput = Omit<CatalogItem, 'id'>
+type CatalogUpdateInput = Omit<CatalogItem, 'id'>
+
 type SupabaseCatalogRecord = {
   id: unknown
   libelle: unknown
@@ -78,5 +81,70 @@ export default function useSupabaseCatalog(
     }
   }, [table, fallbackStatus])
 
-  return { items, loading, error }
+  async function createItem(input: CatalogCreateInput) {
+    const { supabase } = await import('../utils/supabase')
+    const { data, error: insertError } = await supabase
+      .from(table)
+      .insert({
+        libelle: input.label,
+        description: input.description,
+        is_active: input.status === 'Enabled',
+      })
+      .select('id, libelle, description, is_active')
+      .single()
+
+    if (insertError) throw new Error(insertError.message)
+    if (!data) throw new Error('Supabase did not return the created catalog item.')
+
+    return mapCatalogRecord(data, fallbackStatus)
+  }
+
+  async function updateItem(id: CatalogItem['id'], input: CatalogUpdateInput) {
+    const { supabase } = await import('../utils/supabase')
+    const { data, error: updateError } = await supabase
+      .from(table)
+      .update({
+        libelle: input.label,
+        description: input.description,
+        is_active: input.status === 'Enabled',
+      })
+      .eq('id', id)
+      .select('id, libelle, description, is_active')
+      .single()
+
+    if (updateError) throw new Error(updateError.message)
+    if (!data) throw new Error('Supabase did not return the updated catalog item.')
+
+    return mapCatalogRecord(data, fallbackStatus)
+  }
+
+  async function setItemActive(id: CatalogItem['id'], isActive: boolean) {
+    const { supabase } = await import('../utils/supabase')
+    const { data, error: updateError } = await supabase
+      .from(table)
+      .update({ is_active: isActive })
+      .eq('id', id)
+      .select('id, libelle, description, is_active')
+      .single()
+
+    if (updateError) throw new Error(updateError.message)
+    if (!data) throw new Error('Supabase did not return the updated catalog item.')
+
+    return mapCatalogRecord(data, fallbackStatus)
+  }
+
+  async function deleteItem(id: CatalogItem['id']) {
+    const { supabase } = await import('../utils/supabase')
+    const { data, error: deleteError } = await supabase
+      .from(table)
+      .delete()
+      .eq('id', id)
+      .select('id')
+      .maybeSingle()
+
+    if (deleteError) throw new Error(deleteError.message)
+    if (!data) throw new Error('No matching catalog item was deleted.')
+  }
+
+  return { items, loading, error, createItem, updateItem, setItemActive, deleteItem }
 }

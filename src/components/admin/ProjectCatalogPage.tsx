@@ -25,6 +25,10 @@ type ProjectCatalogPageProps = {
   initialItems: CatalogItem[]
   loading?: boolean
   loadError?: string | null
+  onCreate: (item: Omit<CatalogItem, 'id'>) => Promise<CatalogItem>
+  onUpdate: (id: CatalogItem['id'], item: Omit<CatalogItem, 'id'>) => Promise<CatalogItem>
+  onSetActive: (id: CatalogItem['id'], isActive: boolean) => Promise<CatalogItem>
+  onDelete: (id: CatalogItem['id']) => Promise<void>
 }
 
 const pageSizes = [5, 10, 20]
@@ -40,12 +44,18 @@ export default function ProjectCatalogPage({
   initialItems,
   loading = false,
   loadError = null,
+  onCreate,
+  onUpdate,
+  onSetActive,
+  onDelete,
 }: ProjectCatalogPageProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [items, setItems] = useState<CatalogItem[]>(() => [...initialItems])
   const [draft, setDraft] = useState<CatalogDraft | null>(null)
   const [openMenuId, setOpenMenuId] = useState<CatalogItem['id'] | null>(null)
   const [notification, setNotification] = useState<Notification | null>(null)
+  const [saving, setSaving] = useState(false)
+  const [pendingItemId, setPendingItemId] = useState<CatalogItem['id'] | null>(null)
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(5)
@@ -74,9 +84,9 @@ export default function ProjectCatalogPage({
     setDraft({ id: null, label: '', description: '', status: 'Enabled' })
   }
 
-  function saveItem(event: FormEvent<HTMLFormElement>) {
+  async function saveItem(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (!draft) return
+    if (!draft || saving) return
 
     const label = draft.label.trim()
     const itemDescription = draft.description.trim()
@@ -94,38 +104,52 @@ export default function ProjectCatalogPage({
       return
     }
 
-    if (draft.id === null) {
-      const newItem: CatalogItem = {
-        ...draft,
-        id: Math.max(0, ...items.map((item) => typeof item.id === 'number' ? item.id : 0)) + 1,
-        label,
-        description: itemDescription,
-      }
-      setItems((current) => [...current, newItem])
-      setPage(1)
-      notify('success', 'Item added successfully.')
-    } else {
-      const editingId = draft.id
-      setItems((current) => current.map((item) => item.id === draft.id
-        ? { ...draft, label, description: itemDescription, id: editingId }
-        : item))
-      notify('success', 'Item updated successfully.')
+    setSaving(true)
+    try {
+      const values = { label, description: itemDescription, status: draft.status }
+      const savedItem = draft.id === null
+        ? await onCreate(values)
+        : await onUpdate(draft.id, values)
+
+      setItems((current) => draft.id === null
+        ? [savedItem, ...current]
+        : current.map((item) => item.id === savedItem.id ? savedItem : item))
+      if (draft.id === null) setPage(1)
+      notify('success', draft.id === null ? 'Item added successfully.' : 'Item updated successfully.')
+      setDraft(null)
+    } catch (error) {
+      notify('error', error instanceof Error ? error.message : 'Could not save the item.')
+    } finally {
+      setSaving(false)
     }
-
-    setDraft(null)
   }
 
-  function toggleStatus(item: CatalogItem) {
-    const status: CatalogStatus = item.status === 'Enabled' ? 'Disabled' : 'Enabled'
-    setItems((current) => current.map((entry) => entry.id === item.id ? { ...entry, status } : entry))
+  async function toggleStatus(item: CatalogItem) {
+    setPendingItemId(item.id)
     setOpenMenuId(null)
-    notify('success', `Status changed to ${status.toLowerCase()}.`)
+    try {
+      const updatedItem = await onSetActive(item.id, item.status !== 'Enabled')
+      setItems((current) => current.map((entry) => entry.id === updatedItem.id ? updatedItem : entry))
+      notify('success', `Status changed to ${updatedItem.status.toLowerCase()}.`)
+    } catch (error) {
+      notify('error', error instanceof Error ? error.message : 'Could not update the status.')
+    } finally {
+      setPendingItemId(null)
+    }
   }
 
-  function deleteItem(item: CatalogItem) {
-    setItems((current) => current.filter((entry) => entry.id !== item.id))
+  async function deleteItem(item: CatalogItem) {
+    setPendingItemId(item.id)
     setOpenMenuId(null)
-    notify('success', 'Item deleted successfully.')
+    try {
+      await onDelete(item.id)
+      setItems((current) => current.filter((entry) => entry.id !== item.id))
+      notify('success', 'Item deleted successfully.')
+    } catch (error) {
+      notify('error', error instanceof Error ? error.message : 'Could not delete the item.')
+    } finally {
+      setPendingItemId(null)
+    }
   }
 
   return (
@@ -209,6 +233,7 @@ export default function ProjectCatalogPage({
                             aria-label={`Actions for ${item.label}`}
                             aria-haspopup="menu"
                             aria-expanded={openMenuId === item.id}
+                            disabled={pendingItemId !== null}
                             onClick={() => setOpenMenuId(openMenuId === item.id ? null : item.id)}
                           >
                             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -219,19 +244,20 @@ export default function ProjectCatalogPage({
                           </button>
                           {openMenuId === item.id && (
                             <div className="catalog-table__menu" role="menu">
-                              <button type="button" role="menuitem" onClick={() => {
+                              <button type="button" role="menuitem" disabled={pendingItemId !== null} onClick={() => {
                                 setDraft(item)
                                 setOpenMenuId(null)
                               }}>
                                 Edit
                               </button>
-                              <button type="button" role="menuitem" onClick={() => toggleStatus(item)}>
+                              <button type="button" role="menuitem" disabled={pendingItemId !== null} onClick={() => toggleStatus(item)}>
                                 {item.status === 'Enabled' ? 'Disable' : 'Enable'}
                               </button>
                               <button
                                 type="button"
                                 className="catalog-table__menu-delete"
                                 role="menuitem"
+                                disabled={pendingItemId !== null}
                                 onClick={() => deleteItem(item)}
                               >
                                 Delete
@@ -298,7 +324,7 @@ export default function ProjectCatalogPage({
         <div
           className="catalog-modal__overlay"
           onMouseDown={(event) => {
-            if (event.target === event.currentTarget) setDraft(null)
+            if (!saving && event.target === event.currentTarget) setDraft(null)
           }}
         >
           <section className="catalog-modal" role="dialog" aria-modal="true" aria-labelledby="catalog-modal-title">
@@ -307,7 +333,9 @@ export default function ProjectCatalogPage({
                 <h2 id="catalog-modal-title">{draft.id === null ? `Add ${title.toLowerCase().replace(/s$/, '')}` : `Edit ${title.toLowerCase().replace(/s$/, '')}`}</h2>
                 <p>Enter a label, a short description, and its status.</p>
               </div>
-              <button type="button" className="catalog-modal__close" aria-label="Close" onClick={() => setDraft(null)}>
+              <button type="button" className="catalog-modal__close" aria-label="Close" onClick={() => {
+                if (!saving) setDraft(null)
+              }} disabled={saving}>
                 ×
               </button>
             </header>
@@ -319,6 +347,7 @@ export default function ProjectCatalogPage({
                   value={draft.label}
                   onChange={(event) => setDraft({ ...draft, label: event.target.value })}
                   placeholder="Enter a label"
+                  disabled={saving}
                 />
               </label>
               <label>
@@ -328,6 +357,7 @@ export default function ProjectCatalogPage({
                   value={draft.description}
                   onChange={(event) => setDraft({ ...draft, description: event.target.value })}
                   placeholder="Describe this item briefly"
+                  disabled={saving}
                 />
               </label>
               <label>
@@ -335,17 +365,18 @@ export default function ProjectCatalogPage({
                 <select
                   value={draft.status}
                   onChange={(event) => setDraft({ ...draft, status: event.target.value as CatalogStatus })}
+                  disabled={saving}
                 >
                   <option value="Enabled">Enabled</option>
                   <option value="Disabled">Disabled</option>
                 </select>
               </label>
               <footer>
-                <button className="catalog-page__secondary-button" type="button" onClick={() => setDraft(null)}>
+                <button className="catalog-page__secondary-button" type="button" onClick={() => setDraft(null)} disabled={saving}>
                   Cancel
                 </button>
-                <button className="catalog-page__primary-button" type="submit">
-                  {draft.id === null ? 'Add item' : 'Save changes'}
+                <button className="catalog-page__primary-button" type="submit" disabled={saving}>
+                  {saving ? 'Saving…' : draft.id === null ? 'Add item' : 'Save changes'}
                 </button>
               </footer>
             </form>
