@@ -1,6 +1,10 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { SkillCategory } from '../../types/skill'
+import {
+  skillCategoryFallbacks,
+  skillCategoryTranslationKeys,
+  type SkillCategory,
+} from '../../types/skill'
 import Sidebar from './Sidebar'
 import './Sidebar.css'
 import './ProjectCatalogPage.css'
@@ -72,7 +76,7 @@ export default function ProjectCatalogPage({
   onSetActive,
   onDelete,
 }: ProjectCatalogPageProps) {
-  const { i18n } = useTranslation()
+  const { i18n, t } = useTranslation()
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [items, setItems] = useState<CatalogItem[]>(() => [...initialItems])
   const [draft, setDraft] = useState<CatalogDraft | null>(null)
@@ -460,7 +464,9 @@ export default function ProjectCatalogPage({
                   >
                     {categories.map((category) => (
                       <option key={category} value={category}>
-                        {category[0].toUpperCase() + category.slice(1)}
+                        {t(skillCategoryTranslationKeys[category], {
+                          defaultValue: skillCategoryFallbacks[category],
+                        })}
                       </option>
                     ))}
                   </select>

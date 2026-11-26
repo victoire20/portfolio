@@ -5,6 +5,7 @@ import ImgAbout from '../assets/profile.png'
 import AboutSection from '../components/sections/AboutSection'
 import PageHeaderSection from '../components/sections/PageHeaderSection'
 import useActiveSkills from '../hooks/useActiveSkills'
+import { skillCategoryFallbacks, skillCategoryTranslationKeys } from '../types/skill'
 
 export default function About() {
     const { t } = useTranslation()
@@ -44,7 +45,9 @@ export default function About() {
                     {!loading && !error && aboutSkillGroups.map((group) => (
                         <div className="skill__item" key={group.type}>
                             <div className="skills__designation">
-                                {group.type[0].toUpperCase() + group.type.slice(1)}
+                                {t(skillCategoryTranslationKeys[group.type], {
+                                    defaultValue: skillCategoryFallbacks[group.type],
+                                })}
                             </div>
                             <div className="skills__list">
                                 {group.items.map((skill, index) => (

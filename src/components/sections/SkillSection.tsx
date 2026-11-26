@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import GroupSquare from '../../assets/group-square.png'
 import useActiveSkills from '../../hooks/useActiveSkills'
+import { skillCategoryFallbacks, skillCategoryTranslationKeys } from '../../types/skill'
 
 export default function SkillSection() {
     const { t } = useTranslation()
@@ -33,7 +34,9 @@ export default function SkillSection() {
                                     {column.filter((group) => group.items.length > 0).map((group) => (
                                         <div className="skill__item" key={group.type}>
                                             <div className="skills__designation">
-                                                {group.type[0].toUpperCase() + group.type.slice(1)}
+                                                {t(skillCategoryTranslationKeys[group.type], {
+                                                    defaultValue: skillCategoryFallbacks[group.type],
+                                                })}
                                             </div>
                                             <div className="skills__list">
                                                 {group.items.map((skill, index) => (

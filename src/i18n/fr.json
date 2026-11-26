@@ -26,7 +26,8 @@
     "languages": "Langages",
     "tools": "Outils",
     "databases": "Bases de données",
-    "others": "Autres"
+    "others": "Autres",
+    "frameworks": "Frameworks"
   },
   "home": {
     "about_title": "à-propos-de-moi",

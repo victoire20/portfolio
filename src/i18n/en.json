@@ -26,7 +26,8 @@
     "languages": "Languages",
     "tools": "Tools",
     "databases": "Databases",
-    "others": "Others"
+    "others": "Others",
+    "frameworks": "Frameworks"
   },
   "home": {
     "about_title": "about-me",
