@@ -1,0 +1,15 @@
+.admin-projects__page {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.admin-projects__page .projects-table {
+  margin-top: 0;
+}
+
+@media (max-width: 600px) {
+  .admin-projects__page {
+    padding: 1.5rem 1rem;
+  }
+}

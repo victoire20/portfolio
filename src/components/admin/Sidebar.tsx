@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { NavLink } from 'react-router-dom'
 
 type SidebarProps = {
   collapsed: boolean
@@ -34,10 +35,10 @@ function Icon({ name }: { name: IconName }) {
 }
 
 const navigation = [
-  { label: 'Overview', icon: 'grid' as const, active: true },
-  { label: 'Projects', icon: 'folder' as const },
-  { label: 'Analytics', icon: 'chart' as const },
-  { label: 'Settings', icon: 'settings' as const },
+  { label: 'Overview', icon: 'grid' as const, path: '/admin' },
+  { label: 'Projects', icon: 'folder' as const, path: '/admin/projects' },
+  { label: 'Analytics', icon: 'chart' as const, path: '/admin/analytics' },
+  { label: 'Settings', icon: 'settings' as const, path: '/admin/settings' },
 ]
 
 export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
@@ -55,16 +56,16 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
       </div>
       <nav className="admin-sidebar__nav" aria-label="Admin navigation">
         {navigation.map((item) => (
-          <button
+          <NavLink
             key={item.label}
-            className={`admin-sidebar__nav-item${item.active ? ' is-active' : ''}`}
-            type="button"
+            to={item.path}
+            end={item.path === '/admin'}
+            className={({ isActive }) => `admin-sidebar__nav-item${isActive ? ' is-active' : ''}`}
             title={collapsed ? item.label : undefined}
-            aria-current={item.active ? 'page' : undefined}
           >
             <Icon name={item.icon} />
             {!collapsed && <span>{item.label}</span>}
-          </button>
+          </NavLink>
         ))}
       </nav>
 

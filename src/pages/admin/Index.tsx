@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import Sidebar from '../../components/admin/Sidebar'
+import ProjectsDataTable from '../../components/admin/ProjectsDataTable'
 import '../../components/admin/Sidebar.css'
+import '../../components/admin/ProjectsDataTable.css'
 import './Index.css'
 
 export default function AdminIndex() {
@@ -32,6 +34,7 @@ export default function AdminIndex() {
             <h2>Admin dashboard</h2>
             <p>Your portfolio workspace is ready.</p>
           </div>
+          <ProjectsDataTable />
         </div>
       </section>
     </main>
