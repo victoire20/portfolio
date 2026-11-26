@@ -1,0 +1,47 @@
+* [33m3f20d01[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m add fun fact crud features
+* [33m2425e77[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m add fun facts page
+* [33m5832a10[m add skills translate
+* [33m7621b85[m add skills crud
+* [33m4b3026e[m Add skills page
+* [33m8809907[m add translate column in targets and type project table
+* [33m76a34b9[m add crud target & type project features
+* [33m3b4d574[m Add gmail login feature
+* [33m4f7ae92[m Add type project & target device page
+* [33m8cac51a[m Add new project page
+* [33mddea58b[m add projects page
+* [33m504ca56[m Add 404 page
+* [33mdcf24a7[m add login & index dashboard
+* [33mcaf53e5[m fixed: menu language bug
+* [33m280ff0f[m Add background decorator
+* [33m2d2d7f8[m Calculator App Added
+* [33m364daa3[m add new project in catalog
+* [33m064ecc6[m fix ux bug in home page
+* [33md488093[m fix profile image bug
+* [33m8433f84[m Change fun fact text"
+* [33mc92fdab[m fix(assets): move profile image to src/assets and update Home/About imports to make Vercel builds reliable (remove fragile /public paths)
+* [33mdf9caa3[m fix ui bug
+* [33m4c3d6c4[m Change logo bug
+* [33m84795c4[m fix ui bug: footer padding ui
+* [33m86a9903[m fixed bug in grid project
+* [33m1e63830[m ui add horyzontal bar un section home page
+* [33mdd4d36d[m feat(i18n): default to French with i18n-react
+* [33m96205ec[m Add url project card
+* [33m12d0bb2[m fix bug with responsive css
+* [33m34a5323[m fix overflow ui
+* [33m9d39dea[m Add download resume btn
+* [33m4d49187[m chore: prepare project for vercel deployment
+* [33m3718ac0[m fix: use npx to avoid vite permission issue on vercel
+* [33m1fd2a80[m fix: remove tsc from build script for vercel
+* [33mb6ca0e6[m fix vercel build
+* [33mf370c84[m fix react-i8n module
+* [33m5e18b6f[m refactoring project architecture
+* [33mc97eece[m Add README-FR doc
+* [33md2d1c84[m refactor: convert Contact form styles to TailwindCSS
+* [33m8baca6e[m Content customization
+* [33m44121bf[m Add doc
+* [33m58e64a7[m Update portfolio template
+* [33m129ff28[m Upper Case Name
+* [33m1fbff11[m Add First Real Portfolio
+* [33m08d189f[m First version
+* [33m3a0d5a9[m First Version
+* [33m4622f49[m First commit

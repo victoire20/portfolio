@@ -25,7 +25,7 @@ export type CatalogItem = {
   id: number | string
   label: string
   description: string
-  status: CatalogStatus
+  status?: CatalogStatus
   translations?: CatalogTranslations
   type?: SkillCategory
 }
@@ -188,7 +188,7 @@ export default function ProjectCatalogPage({
       const createValues = labels.map((itemLabel) => ({
         label: itemLabel,
         description: itemDescription,
-        status: draft.status,
+        ...(showStatus ? { status: draft.status } : {}),
         ...(categories ? { type: draft.type as SkillCategory } : {}),
         ...(showTranslations ? { translations: {
           fr: { label: itemLabel, description: itemDescription },
@@ -235,7 +235,7 @@ export default function ProjectCatalogPage({
     try {
       const updatedItem = await onSetActive(item.id, item.status !== 'Enabled')
       setItems((current) => current.map((entry) => entry.id === updatedItem.id ? updatedItem : entry))
-      notify('success', `Status changed to ${updatedItem.status.toLowerCase()}.`)
+      notify('success', `Status changed to ${updatedItem.status?.toLowerCase() ?? 'unknown'}.`)
     } catch (error) {
       notify('error', error instanceof Error ? error.message : 'Could not update the status.')
     } finally {
@@ -362,9 +362,9 @@ export default function ProjectCatalogPage({
                       )}
                       {categories && <td>{item.type}</td>}
                       {showStatus && <td>
-                        <span className={`catalog-table__status catalog-table__status--${item.status.toLowerCase()}`}>
+                        <span className={`catalog-table__status catalog-table__status--${(item.status ?? 'Enabled').toLowerCase()}`}>
                           <span aria-hidden="true" />
-                          {item.status}
+                          {item.status ?? 'Enabled'}
                         </span>
                       </td>}
                       <td className="catalog-table__actions-cell">
@@ -394,7 +394,7 @@ export default function ProjectCatalogPage({
                                   englishLabel: showTranslations ? item.translations?.en.label ?? '' : '',
                                   englishDescription: showTranslations ? item.translations?.en.description ?? '' : '',
                                   type: item.type ?? categories?.[0] ?? '',
-                                  status: item.status,
+                                  status: item.status ?? 'Enabled',
                                 })
                                 setOpenMenuId(null)
                               }}>
@@ -573,7 +573,7 @@ export default function ProjectCatalogPage({
                   />
                 </label>
               )}
-              <label>
+              {showStatus && <label>
                 Status
                 <select
                   value={draft.status}
@@ -583,7 +583,7 @@ export default function ProjectCatalogPage({
                   <option value="Enabled">Enabled</option>
                   <option value="Disabled">Disabled</option>
                 </select>
-              </label>
+              </label>}
               <footer>
                 <button className="catalog-page__secondary-button" type="button" onClick={() => setDraft(null)} disabled={saving}>
                   Cancel

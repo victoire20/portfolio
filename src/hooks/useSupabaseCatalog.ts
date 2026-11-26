@@ -6,7 +6,7 @@ import type {
 } from '../components/admin/ProjectCatalogPage'
 import { skillCategories, type SkillCategory } from '../types/skill'
 
-type CatalogTable = 'targets' | 'project_types' | 'skills' | 'fun_facts'
+type CatalogTable = 'targets' | 'project_types' | 'skills' | 'funfacts'
 
 type CatalogCreateInput = Omit<CatalogItem, 'id'>
 type CatalogUpdateInput = Omit<CatalogItem, 'id'>
@@ -29,7 +29,7 @@ function mapCatalogRecord(
   if (typeof record.id !== 'number' && typeof record.id !== 'string') {
     throw new Error('A catalog record has an invalid id.')
   }
-  const contentOnly = table === 'fun_facts'
+  const contentOnly = table === 'funfacts'
   const label = readString(contentOnly ? record.content : record.libelle)
   if (!label || !label.trim()) {
     throw new Error(contentOnly
@@ -78,9 +78,11 @@ function mapCatalogRecord(
     id: record.id,
     label,
     description: baseDescription,
-    status: typeof record.is_active === 'boolean'
-      ? record.is_active ? 'Enabled' : 'Disabled'
-      : fallbackStatus,
+    ...(typeof record.is_active === 'boolean'
+      ? { status: record.is_active ? 'Enabled' as const : 'Disabled' as const }
+      : table !== 'funfacts'
+        ? { status: fallbackStatus }
+        : {}),
     ...(translations ? { translations } : {}),
     ...(type ? { type } : {}),
   }
@@ -112,9 +114,9 @@ export default function useSupabaseCatalog(
           .from('skills')
           .select('id, libelle, type, is_active')
           .overrideTypes<SupabaseCatalogRecord[]>()
-        : table === 'fun_facts'
+        : table === 'funfacts'
           ? await supabase
-            .from('fun_facts')
+            .from('funfacts')
             .select('id, content, translations')
             .overrideTypes<SupabaseCatalogRecord[]>()
         : await supabase
@@ -162,9 +164,9 @@ export default function useSupabaseCatalog(
         })
         .select('id, libelle, type, is_active')
         .overrideTypes<SupabaseCatalogRecord[]>()
-      : table === 'fun_facts'
+      : table === 'funfacts'
         ? await supabase
-          .from('fun_facts')
+          .from('funfacts')
           .insert({
             content: input.label,
             translations: {
@@ -205,9 +207,9 @@ export default function useSupabaseCatalog(
         .eq('id', id)
         .select('id, libelle, type, is_active')
         .overrideTypes<SupabaseCatalogRecord[]>()
-      : table === 'fun_facts'
+      : table === 'funfacts'
         ? await supabase
-          .from('fun_facts')
+          .from('funfacts')
           .update({
             content: input.label,
             translations: {
@@ -238,7 +240,7 @@ export default function useSupabaseCatalog(
   }
 
   async function setItemActive(id: CatalogItem['id'], isActive: boolean) {
-    if (table === 'fun_facts') {
+    if (table === 'funfacts') {
       throw new Error('Fun facts do not have an active status.')
     }
     const { supabase } = await import('../utils/supabase')

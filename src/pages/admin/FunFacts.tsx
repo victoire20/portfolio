@@ -3,7 +3,7 @@ import useSupabaseCatalog from '../../hooks/useSupabaseCatalog'
 
 export default function FunFacts() {
   const { items, loading, error, createItem, updateItem, setItemActive, deleteItem } =
-    useSupabaseCatalog('fun_facts')
+    useSupabaseCatalog('funfacts')
 
   return (
     <ProjectCatalogPage
