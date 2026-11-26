@@ -1,9 +1,15 @@
 import { useTranslation } from 'react-i18next'
 import GroupSquare from '../../assets/group-square.png'
-
+import useActiveSkills from '../../hooks/useActiveSkills'
 
 export default function SkillSection() {
     const { t } = useTranslation()
+    const { groups, loading, error } = useActiveSkills()
+    const columns = [
+        groups.filter((group) => group.type === 'languages'),
+        groups.filter((group) => group.type === 'databases' || group.type === 'other'),
+        groups.filter((group) => group.type === 'tools' || group.type === 'frameworks'),
+    ]
 
     return (
         <section className="row" id="skill">
@@ -19,42 +25,24 @@ export default function SkillSection() {
                 </div>
                 <div className="skills__layout">
                     <div className="skills__layout">
-                        <div className="col">
-                            <div className="skill__item">
-                                <div className="skills__designation">{t('skills.languages')}</div>
-                                <div className="skills__list">
-                                    <span>Python</span> <span>JavaScript</span> <span>PhP</span> <span>SQL</span>
-                                </div>
+                        {error && <p role="alert">Could not load skills: {error}</p>}
+                        {loading && <p role="status">Loading skills…</p>}
+                        {!loading && !error && columns.map((column, columnIndex) => (
+                            <div className="col" key={columnIndex}>
+                                {column.filter((group) => group.items.length > 0).map((group) => (
+                                    <div className="skill__item" key={group.type}>
+                                        <div className="skills__designation">
+                                            {group.type[0].toUpperCase() + group.type.slice(1)}
+                                        </div>
+                                        <div className="skills__list">
+                                            {group.items.map((skill, index) => (
+                                                <span key={`${skill}-${index}`}>{skill}</span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                        </div>
-                            <div className="col">
-                            <div className="skill__item">
-                                <div className="skills__designation">{t('skills.databases')}</div>
-                                <div className="skills__list">
-                                    <span>PostgresSQL</span> <span>MySQL</span> <span>SQLite</span> <span>NOSQL</span> <span>Redis</span>
-                                </div>
-                            </div>
-                            <div className="skill__item">
-                                <div className="skills__designation">{t('skills.others')}</div>
-                                <div className="skills__list">
-                                    <span>HTML</span> <span>CSS</span> <span>Jquery</span> <span>REST API / JWT</span> <span>Swagger / OpenAPI</span> <span>Jinja</span>
-                                </div>
-                            </div>
-                            </div>
-                            <div className="col">
-                            <div className="skill__item">
-                                <div className="skills__designation">{t('skills.tools')}</div>
-                                <div className="skills__list">
-                                    <span>Git / GitHub</span> <span>Docker</span> <span>CI/CD</span> <span>Postman</span> <span>VSCode</span> <span>Linux / IntelliJ IDEA</span>
-                                </div>
-                            </div>
-                            <div className="skill__item">
-                                <div className="skills__designation">Frameworks</div>
-                                <div className="skills__list">
-                                    <span>Django</span> <span>FastAPI</span> <span>React</span> <span>Laravel</span> <span>Bootstrap</span>
-                                </div>
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </div>

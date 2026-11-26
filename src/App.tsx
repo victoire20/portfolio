@@ -11,6 +11,7 @@ import AdminProjects from './pages/admin/Projects'
 import NewProject from './pages/admin/NewProject'
 import ProjectTypes from './pages/admin/ProjectTypes'
 import Targets from './pages/admin/Targets'
+import Skills from './pages/admin/Skills'
 import Login from './pages/admin/Login'
 import AuthCallback from './pages/admin/AuthCallback'
 import NotFound from './pages/NotFound'
@@ -39,6 +40,7 @@ export default function App() {
           <Route path="projects/new" element={<NewProject />} />
           <Route path="project-types" element={<ProjectTypes />} />
           <Route path="targets" element={<Targets />} />
+          <Route path="skills" element={<Skills />} />
           <Route path="*" element={<AdminNotFound />} />
         </Route>
         <Route path="*" element={<NotFound />} />

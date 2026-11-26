@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
+import type { SkillCategory } from '../../types/skill'
 import Sidebar from './Sidebar'
 import './Sidebar.css'
 import './ProjectCatalogPage.css'
@@ -22,6 +23,7 @@ export type CatalogItem = {
   description: string
   status: CatalogStatus
   translations?: CatalogTranslations
+  type?: SkillCategory
 }
 
 type CatalogDraft = {
@@ -30,6 +32,7 @@ type CatalogDraft = {
   description: string
   englishLabel: string
   englishDescription: string
+  type: string
   status: CatalogStatus
 }
 
@@ -37,6 +40,9 @@ type ProjectCatalogPageProps = {
   title: string
   description: string
   initialItems: CatalogItem[]
+  showDescription?: boolean
+  showTranslations?: boolean
+  categories?: readonly SkillCategory[]
   loading?: boolean
   loadError?: string | null
   onCreate: (item: Omit<CatalogItem, 'id'>) => Promise<CatalogItem>
@@ -56,6 +62,9 @@ export default function ProjectCatalogPage({
   title,
   description,
   initialItems,
+  showDescription = true,
+  showTranslations = true,
+  categories,
   loading = false,
   loadError = null,
   onCreate,
@@ -77,8 +86,10 @@ export default function ProjectCatalogPage({
 
   const filteredItems = items.filter((item) => {
     const query = search.trim().toLowerCase()
-    const text = getLocalizedText(item, i18n.language)
-    return text.label.toLowerCase().includes(query) || text.description.toLowerCase().includes(query)
+    const text = getLocalizedText(item, i18n.language, showTranslations)
+    return text.label.toLowerCase().includes(query)
+      || (showDescription && text.description.toLowerCase().includes(query))
+      || Boolean(categories && item.type?.includes(query))
   })
   const pageCount = Math.max(1, Math.ceil(filteredItems.length / pageSize))
   const currentPage = Math.min(page, pageCount)
@@ -103,6 +114,7 @@ export default function ProjectCatalogPage({
       description: '',
       englishLabel: '',
       englishDescription: '',
+      type: categories?.[0] ?? '',
       status: 'Enabled',
     })
   }
@@ -113,17 +125,23 @@ export default function ProjectCatalogPage({
 
     const label = draft.label.trim()
     const itemDescription = draft.description.trim()
-    const englishLabel = draft.englishLabel.trim()
-    const englishDescription = draft.englishDescription.trim()
+    const englishLabel = showTranslations ? draft.englishLabel.trim() : ''
+    const englishDescription = showTranslations ? draft.englishDescription.trim() : ''
 
     if (!label) {
       notify('error', 'A label is required.')
       return
     }
+    if (categories && !categories.includes(draft.type as SkillCategory)) {
+      notify('error', 'Select a valid category.')
+      return
+    }
 
     const duplicate = items.some((item) => {
       if (item.id === draft.id) return false
-      const currentEnglishLabel = item.translations?.en.label.trim().toLowerCase()
+      const currentEnglishLabel = showTranslations
+        ? item.translations?.en.label.trim().toLowerCase()
+        : undefined
       return item.label.trim().toLowerCase() === label.toLowerCase()
         || Boolean(englishLabel && currentEnglishLabel === englishLabel.toLowerCase())
     }
@@ -139,10 +157,11 @@ export default function ProjectCatalogPage({
         label,
         description: itemDescription,
         status: draft.status,
-        translations: {
+        ...(categories ? { type: draft.type as SkillCategory } : {}),
+        ...(showTranslations ? { translations: {
           fr: { label, description: itemDescription },
           en: { label: englishLabel, description: englishDescription },
-        },
+        } } : {}),
       }
       const savedItem = draft.id === null
         ? await onCreate(values)
@@ -246,7 +265,8 @@ export default function ProjectCatalogPage({
                 <thead>
                   <tr>
                     <th scope="col">Label</th>
-                    <th scope="col">Description</th>
+                    {showDescription && <th scope="col">Description</th>}
+                    {categories && <th scope="col">Type</th>}
                     <th scope="col">Status</th>
                     <th scope="col"><span className="catalog-page__visually-hidden">Actions</span></th>
                   </tr>
@@ -254,8 +274,11 @@ export default function ProjectCatalogPage({
                 <tbody>
                   {visibleItems.map((item) => (
                     <tr key={item.id}>
-                      <td className="catalog-table__label">{getLocalizedText(item, i18n.language).label}</td>
-                      <td className="catalog-table__description">{getLocalizedText(item, i18n.language).description}</td>
+                      <td className="catalog-table__label">{getLocalizedText(item, i18n.language, showTranslations).label}</td>
+                      {showDescription && (
+                        <td className="catalog-table__description">{getLocalizedText(item, i18n.language, showTranslations).description}</td>
+                      )}
+                      {categories && <td>{item.type}</td>}
                       <td>
                         <span className={`catalog-table__status catalog-table__status--${item.status.toLowerCase()}`}>
                           <span aria-hidden="true" />
@@ -286,8 +309,9 @@ export default function ProjectCatalogPage({
                                   id: item.id,
                                   label: item.label,
                                   description: item.description,
-                                  englishLabel: item.translations?.en.label ?? '',
-                                  englishDescription: item.translations?.en.description ?? '',
+                                  englishLabel: showTranslations ? item.translations?.en.label ?? '' : '',
+                                  englishDescription: showTranslations ? item.translations?.en.description ?? '' : '',
+                                  type: item.type ?? categories?.[0] ?? '',
                                   status: item.status,
                                 })
                                 setOpenMenuId(null)
@@ -314,7 +338,10 @@ export default function ProjectCatalogPage({
                   ))}
                   {visibleItems.length === 0 && (
                     <tr>
-                      <td className="catalog-table__empty" colSpan={4}>
+                      <td
+                        className="catalog-table__empty"
+                        colSpan={1 + Number(showDescription) + Number(Boolean(categories)) + 2}
+                      >
                         {loading
                           ? `Loading ${title.toLowerCase()}...`
                           : loadError
@@ -375,7 +402,11 @@ export default function ProjectCatalogPage({
             <header>
               <div>
                 <h2 id="catalog-modal-title">{draft.id === null ? `Add ${title.toLowerCase().replace(/s$/, '')}` : `Edit ${title.toLowerCase().replace(/s$/, '')}`}</h2>
-                <p>Enter a label, a short description, and its status.</p>
+                <p>{showDescription
+                  ? 'Enter a label, a short description, and its status.'
+                  : categories
+                    ? 'Enter a skill and select its category.'
+                    : 'Enter a label and its status.'}</p>
               </div>
               <button type="button" className="catalog-modal__close" aria-label="Close" onClick={() => {
                 if (!saving) setDraft(null)
@@ -385,7 +416,7 @@ export default function ProjectCatalogPage({
             </header>
             <form onSubmit={saveItem}>
               <label>
-                Label (French)
+                {showTranslations ? 'Label (French)' : 'Label'}
                 <input
                   autoFocus
                   value={draft.label}
@@ -394,35 +425,57 @@ export default function ProjectCatalogPage({
                   disabled={saving}
                 />
               </label>
-              <label>
-                Brief description (French)
-                <textarea
-                  rows={3}
-                  value={draft.description}
-                  onChange={(event) => setDraft({ ...draft, description: event.target.value })}
-                  placeholder="Describe this item briefly"
-                  disabled={saving}
-                />
-              </label>
-              <label>
-                Label (English)
-                <input
-                  value={draft.englishLabel}
-                  onChange={(event) => setDraft({ ...draft, englishLabel: event.target.value })}
-                  placeholder="English label (optional)"
-                  disabled={saving}
-                />
-              </label>
-              <label>
-                Brief description (English)
-                <textarea
-                  rows={3}
-                  value={draft.englishDescription}
-                  onChange={(event) => setDraft({ ...draft, englishDescription: event.target.value })}
-                  placeholder="English description (optional)"
-                  disabled={saving}
-                />
-              </label>
+              {showDescription && (
+                <label>
+                  Brief description (French)
+                  <textarea
+                    rows={3}
+                    value={draft.description}
+                    onChange={(event) => setDraft({ ...draft, description: event.target.value })}
+                    placeholder="Describe this item briefly"
+                    disabled={saving}
+                  />
+                </label>
+              )}
+              {categories && (
+                <label>
+                  Type
+                  <select
+                    value={draft.type}
+                    onChange={(event) => setDraft({ ...draft, type: event.target.value })}
+                    disabled={saving}
+                  >
+                    {categories.map((category) => (
+                      <option key={category} value={category}>
+                        {category[0].toUpperCase() + category.slice(1)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
+              {showTranslations && (
+                <label>
+                  Label (English)
+                  <input
+                    value={draft.englishLabel}
+                    onChange={(event) => setDraft({ ...draft, englishLabel: event.target.value })}
+                    placeholder="English label (optional)"
+                    disabled={saving}
+                  />
+                </label>
+              )}
+              {showTranslations && showDescription && (
+                <label>
+                  Brief description (English)
+                  <textarea
+                    rows={3}
+                    value={draft.englishDescription}
+                    onChange={(event) => setDraft({ ...draft, englishDescription: event.target.value })}
+                    placeholder="English description (optional)"
+                    disabled={saving}
+                  />
+                </label>
+              )}
               <label>
                 Status
                 <select
@@ -465,7 +518,10 @@ export default function ProjectCatalogPage({
   )
 }
 
-function getLocalizedText(item: CatalogItem, language: string) {
+function getLocalizedText(item: CatalogItem, language: string, showTranslations: boolean) {
+  if (!showTranslations) {
+    return { label: item.label, description: item.description }
+  }
   const locale = language.toLowerCase().startsWith('fr') ? 'fr' : 'en'
   const translated = item.translations?.[locale]
   return {
