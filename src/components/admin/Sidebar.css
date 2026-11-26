@@ -1,0 +1,142 @@
+.admin-sidebar {
+  display: flex;
+  width: 15.5rem;
+  min-height: 100vh;
+  flex: 0 0 auto;
+  flex-direction: column;
+  border-right: 1px solid #e4e4e7;
+  padding: 1rem 0.75rem;
+  background: #fff;
+  color: #18181b;
+  transition: width 180ms ease;
+}
+
+.admin-sidebar--collapsed {
+  width: 4.5rem;
+}
+
+.admin-sidebar__brand {
+  display: flex;
+  height: 2.5rem;
+  align-items: center;
+  gap: 0.75rem;
+  overflow: hidden;
+  padding: 0 0.5rem;
+  white-space: nowrap;
+}
+
+.admin-sidebar__brand-mark {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 2rem;
+  place-items: center;
+  border-radius: 0.5rem;
+  background: #18181b;
+  color: #fafafa;
+}
+
+.admin-sidebar__brand-mark .admin-sidebar__icon {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.admin-sidebar__brand-name {
+  overflow: hidden;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-overflow: ellipsis;
+}
+
+.admin-sidebar__section-label {
+  display: flex;
+  height: 3.25rem;
+  align-items: end;
+  padding: 0 0.75rem 0.625rem;
+  color: #71717a;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.admin-sidebar__nav {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.admin-sidebar__nav-item,
+.admin-sidebar__collapse {
+  display: flex;
+  width: 100%;
+  min-height: 2.5rem;
+  align-items: center;
+  gap: 0.75rem;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0.375rem;
+  padding: 0 0.75rem;
+  background: transparent;
+  color: #52525b;
+  font: inherit;
+  font-size: 0.875rem;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.admin-sidebar__nav-item:hover,
+.admin-sidebar__collapse:hover {
+  background: #f4f4f5;
+  color: #18181b;
+}
+
+.admin-sidebar__nav-item.is-active {
+  background: #f4f4f5;
+  color: #18181b;
+  font-weight: 500;
+}
+
+.admin-sidebar__icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex: 0 0 1.125rem;
+}
+
+.admin-sidebar__nav-item span,
+.admin-sidebar__collapse span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-sidebar--collapsed .admin-sidebar__brand,
+.admin-sidebar--collapsed .admin-sidebar__nav-item,
+.admin-sidebar--collapsed .admin-sidebar__collapse {
+  justify-content: center;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.admin-sidebar__bottom {
+  margin-top: auto;
+  border-top: 1px solid #e4e4e7;
+  padding-top: 0.75rem;
+}
+
+.admin-sidebar__collapse .admin-sidebar__icon {
+  transition: transform 180ms ease;
+}
+
+.admin-sidebar--collapsed .admin-sidebar__collapse .admin-sidebar__icon {
+  transform: rotate(180deg);
+}
+
+.admin-sidebar button:focus-visible {
+  outline: 2px solid #71717a;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-sidebar,
+  .admin-sidebar__collapse .admin-sidebar__icon {
+    transition: none;
+  }
+}
