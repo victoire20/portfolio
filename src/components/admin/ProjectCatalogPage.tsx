@@ -1,21 +1,35 @@
 import { useEffect, useState, type FormEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 import Sidebar from './Sidebar'
 import './Sidebar.css'
 import './ProjectCatalogPage.css'
 
 export type CatalogStatus = 'Enabled' | 'Disabled'
 
+export type CatalogTranslation = {
+  label: string
+  description: string
+}
+
+export type CatalogTranslations = {
+  fr: CatalogTranslation
+  en: CatalogTranslation
+}
+
 export type CatalogItem = {
   id: number | string
   label: string
   description: string
   status: CatalogStatus
+  translations?: CatalogTranslations
 }
 
 type CatalogDraft = {
   id: number | string | null
   label: string
   description: string
+  englishLabel: string
+  englishDescription: string
   status: CatalogStatus
 }
 
@@ -49,6 +63,7 @@ export default function ProjectCatalogPage({
   onSetActive,
   onDelete,
 }: ProjectCatalogPageProps) {
+  const { i18n } = useTranslation()
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [items, setItems] = useState<CatalogItem[]>(() => [...initialItems])
   const [draft, setDraft] = useState<CatalogDraft | null>(null)
@@ -62,7 +77,8 @@ export default function ProjectCatalogPage({
 
   const filteredItems = items.filter((item) => {
     const query = search.trim().toLowerCase()
-    return item.label.toLowerCase().includes(query) || item.description.toLowerCase().includes(query)
+    const text = getLocalizedText(item, i18n.language)
+    return text.label.toLowerCase().includes(query) || text.description.toLowerCase().includes(query)
   })
   const pageCount = Math.max(1, Math.ceil(filteredItems.length / pageSize))
   const currentPage = Math.min(page, pageCount)
@@ -81,7 +97,14 @@ export default function ProjectCatalogPage({
   }
 
   function openCreateModal() {
-    setDraft({ id: null, label: '', description: '', status: 'Enabled' })
+    setDraft({
+      id: null,
+      label: '',
+      description: '',
+      englishLabel: '',
+      englishDescription: '',
+      status: 'Enabled',
+    })
   }
 
   async function saveItem(event: FormEvent<HTMLFormElement>) {
@@ -90,14 +113,20 @@ export default function ProjectCatalogPage({
 
     const label = draft.label.trim()
     const itemDescription = draft.description.trim()
+    const englishLabel = draft.englishLabel.trim()
+    const englishDescription = draft.englishDescription.trim()
 
     if (!label) {
       notify('error', 'A label is required.')
       return
     }
 
-    const duplicate = items.some((item) =>
-      item.id !== draft.id && item.label.toLowerCase() === label.toLowerCase(),
+    const duplicate = items.some((item) => {
+      if (item.id === draft.id) return false
+      const currentEnglishLabel = item.translations?.en.label.trim().toLowerCase()
+      return item.label.trim().toLowerCase() === label.toLowerCase()
+        || Boolean(englishLabel && currentEnglishLabel === englishLabel.toLowerCase())
+    }
     )
     if (duplicate) {
       notify('error', 'An item with this label already exists.')
@@ -106,7 +135,15 @@ export default function ProjectCatalogPage({
 
     setSaving(true)
     try {
-      const values = { label, description: itemDescription, status: draft.status }
+      const values = {
+        label,
+        description: itemDescription,
+        status: draft.status,
+        translations: {
+          fr: { label, description: itemDescription },
+          en: { label: englishLabel, description: englishDescription },
+        },
+      }
       const savedItem = draft.id === null
         ? await onCreate(values)
         : await onUpdate(draft.id, values)
@@ -217,8 +254,8 @@ export default function ProjectCatalogPage({
                 <tbody>
                   {visibleItems.map((item) => (
                     <tr key={item.id}>
-                      <td className="catalog-table__label">{item.label}</td>
-                      <td className="catalog-table__description">{item.description}</td>
+                      <td className="catalog-table__label">{getLocalizedText(item, i18n.language).label}</td>
+                      <td className="catalog-table__description">{getLocalizedText(item, i18n.language).description}</td>
                       <td>
                         <span className={`catalog-table__status catalog-table__status--${item.status.toLowerCase()}`}>
                           <span aria-hidden="true" />
@@ -245,7 +282,14 @@ export default function ProjectCatalogPage({
                           {openMenuId === item.id && (
                             <div className="catalog-table__menu" role="menu">
                               <button type="button" role="menuitem" disabled={pendingItemId !== null} onClick={() => {
-                                setDraft(item)
+                                setDraft({
+                                  id: item.id,
+                                  label: item.label,
+                                  description: item.description,
+                                  englishLabel: item.translations?.en.label ?? '',
+                                  englishDescription: item.translations?.en.description ?? '',
+                                  status: item.status,
+                                })
                                 setOpenMenuId(null)
                               }}>
                                 Edit
@@ -341,7 +385,7 @@ export default function ProjectCatalogPage({
             </header>
             <form onSubmit={saveItem}>
               <label>
-                Label
+                Label (French)
                 <input
                   autoFocus
                   value={draft.label}
@@ -351,12 +395,31 @@ export default function ProjectCatalogPage({
                 />
               </label>
               <label>
-                Brief description
+                Brief description (French)
                 <textarea
                   rows={3}
                   value={draft.description}
                   onChange={(event) => setDraft({ ...draft, description: event.target.value })}
                   placeholder="Describe this item briefly"
+                  disabled={saving}
+                />
+              </label>
+              <label>
+                Label (English)
+                <input
+                  value={draft.englishLabel}
+                  onChange={(event) => setDraft({ ...draft, englishLabel: event.target.value })}
+                  placeholder="English label (optional)"
+                  disabled={saving}
+                />
+              </label>
+              <label>
+                Brief description (English)
+                <textarea
+                  rows={3}
+                  value={draft.englishDescription}
+                  onChange={(event) => setDraft({ ...draft, englishDescription: event.target.value })}
+                  placeholder="English description (optional)"
                   disabled={saving}
                 />
               </label>
@@ -400,4 +463,13 @@ export default function ProjectCatalogPage({
       )}
     </main>
   )
+}
+
+function getLocalizedText(item: CatalogItem, language: string) {
+  const locale = language.toLowerCase().startsWith('fr') ? 'fr' : 'en'
+  const translated = item.translations?.[locale]
+  return {
+    label: translated?.label.trim() || item.label,
+    description: translated?.description || item.description,
+  }
 }

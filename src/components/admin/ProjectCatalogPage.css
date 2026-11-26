@@ -201,6 +201,10 @@
   background: #16a34a;
 }
 
+.catalog-table__status--disabled > span {
+  background: #dc2626;
+}
+
 .catalog-table__actions-cell {
   width: 4rem;
   text-align: right;

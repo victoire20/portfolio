@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react'
-import type { CatalogItem, CatalogStatus } from '../components/admin/ProjectCatalogPage'
+import type {
+  CatalogItem,
+  CatalogStatus,
+  CatalogTranslations,
+} from '../components/admin/ProjectCatalogPage'
 
 type CatalogTable = 'targets' | 'project_types'
 
@@ -11,7 +15,10 @@ type SupabaseCatalogRecord = {
   libelle: unknown
   description: unknown
   is_active: unknown
+  translations?: unknown
 }
+
+const catalogColumns = 'id, libelle, description, is_active, translations'
 
 function mapCatalogRecord(
   record: SupabaseCatalogRecord,
@@ -27,14 +34,38 @@ function mapCatalogRecord(
     throw new Error('A catalog record has an invalid description.')
   }
 
+  const baseDescription = record.description ?? ''
+  const rawTranslations = isRecord(record.translations) ? record.translations : {}
+  const french = isRecord(rawTranslations.fr) ? rawTranslations.fr : {}
+  const english = isRecord(rawTranslations.en) ? rawTranslations.en : {}
+  const translations: CatalogTranslations = {
+    fr: {
+      label: readString(french.label) || record.libelle,
+      description: readString(french.description) ?? baseDescription,
+    },
+    en: {
+      label: readString(english.label) ?? '',
+      description: readString(english.description) ?? '',
+    },
+  }
+
   return {
     id: record.id,
     label: record.libelle,
-    description: record.description ?? '',
+    description: baseDescription,
     status: typeof record.is_active === 'boolean'
       ? record.is_active ? 'Enabled' : 'Disabled'
       : fallbackStatus,
+    translations,
   }
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+function readString(value: unknown) {
+  return typeof value === 'string' ? value : null
 }
 
 export default function useSupabaseCatalog(
@@ -52,7 +83,7 @@ export default function useSupabaseCatalog(
       const { supabase } = await import('../utils/supabase')
       const { data, error: queryError } = await supabase
         .from(table)
-        .select('id, libelle, description, is_active')
+        .select(catalogColumns)
 
       if (!isCurrent) return
 
@@ -89,8 +120,9 @@ export default function useSupabaseCatalog(
         libelle: input.label,
         description: input.description,
         is_active: input.status === 'Enabled',
+        translations: input.translations,
       })
-      .select('id, libelle, description, is_active')
+      .select(catalogColumns)
       .single()
 
     if (insertError) throw new Error(insertError.message)
@@ -107,9 +139,10 @@ export default function useSupabaseCatalog(
         libelle: input.label,
         description: input.description,
         is_active: input.status === 'Enabled',
+        translations: input.translations,
       })
       .eq('id', id)
-      .select('id, libelle, description, is_active')
+      .select(catalogColumns)
       .single()
 
     if (updateError) throw new Error(updateError.message)
@@ -124,7 +157,7 @@ export default function useSupabaseCatalog(
       .from(table)
       .update({ is_active: isActive })
       .eq('id', id)
-      .select('id, libelle, description, is_active')
+      .select(catalogColumns)
       .single()
 
     if (updateError) throw new Error(updateError.message)
