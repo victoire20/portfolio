@@ -5,12 +5,15 @@ import './index.css'
 
 import { BrowserRouter as Router } from 'react-router-dom'
 import App from './App'
+import { AuthProvider } from './auth/AuthProvider'
 import './i18n/index'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Router>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </Router>
   </StrictMode>
 )

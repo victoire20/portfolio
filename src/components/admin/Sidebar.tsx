@@ -1,12 +1,13 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
+import useAuth from '../../auth/useAuth'
 
 type SidebarProps = {
   collapsed: boolean
   onToggle: () => void
 }
 
-type IconName = 'grid' | 'folder' | 'chart' | 'settings' | 'chevron' | 'briefcase' | 'tags' | 'target'
+type IconName = 'grid' | 'folder' | 'chart' | 'settings' | 'chevron' | 'briefcase' | 'tags' | 'target' | 'logout'
 
 function Icon({ name }: { name: IconName }) {
   const paths: Record<IconName, ReactNode> = {
@@ -16,6 +17,7 @@ function Icon({ name }: { name: IconName }) {
     settings: <><circle cx="12" cy="12" r="3" /><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.7a8 8 0 0 1-1.7 1l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.7-1l-1.7.7-1.4-2.4 1.4-1.1a7 7 0 0 1 0-2l-1.4-1.1 1.4-2.4 1.7.7a8 8 0 0 1 1.7-1l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.7 1l1.7-.7 1.4 2.4-1.4 1.1a7 7 0 0 1 0 2Z" /></>,
     tags: <><path d="m20.6 13.4-7.2 7.2a2 2 0 0 1-2.8 0l-7.2-7.2a2 2 0 0 1 0-2.8l7.2-7.2a2 2 0 0 1 1.4-.6H20v8a2 2 0 0 1-.6 1.4Z" /><circle cx="16" cy="8" r="1" /></>,
     target: <><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1" /></>,
+    logout: <><path d="M10 17l5-5-5-5" /><path d="M15 12H3" /><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6" /></>,
     chevron: <path d="m9 18 6-6-6-6" />,
     briefcase: <><rect x="3" y="7" width="18" height="14" rx="2" /><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v2h4v-2" /></>,
   }
@@ -46,6 +48,20 @@ const navigation = [
 ]
 
 export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
+  const { signOut } = useAuth()
+  const [signOutError, setSignOutError] = useState<string | null>(null)
+  const [signingOut, setSigningOut] = useState(false)
+
+  async function handleSignOut() {
+    setSigningOut(true)
+    setSignOutError(null)
+    const error = await signOut()
+    if (error) {
+      setSignOutError(error)
+      setSigningOut(false)
+    }
+  }
+
   return (
     <aside className={`admin-sidebar${collapsed ? ' admin-sidebar--collapsed' : ''}`}>
       <div className="admin-sidebar__brand">
@@ -74,6 +90,18 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
       </nav>
 
       <div className="admin-sidebar__bottom">
+        {signOutError && <p className="admin-sidebar__auth-error" role="alert">{signOutError}</p>}
+        <button
+          className="admin-sidebar__signout"
+          type="button"
+          onClick={handleSignOut}
+          disabled={signingOut}
+          aria-label="Sign out"
+          title={collapsed ? 'Sign out' : undefined}
+        >
+          <Icon name="logout" />
+          {!collapsed && <span>{signingOut ? 'Signing out…' : 'Sign out'}</span>}
+        </button>
         <button
           className="admin-sidebar__collapse"
           type="button"

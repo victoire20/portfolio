@@ -1,20 +1,17 @@
-import ProjectCatalogPage, { type CatalogItem } from '../../components/admin/ProjectCatalogPage'
-
-const projectTypes: CatalogItem[] = [
-  { id: 1, label: 'CLI', description: 'Command-line interface applications.', status: 'Enabled' },
-  { id: 2, label: 'Web', description: 'Browser-based websites and applications.', status: 'Enabled' },
-  { id: 3, label: 'Mobile', description: 'Applications for smartphones and tablets.', status: 'Enabled' },
-  { id: 4, label: 'Desktop', description: 'Software installed and run on desktop computers.', status: 'Enabled' },
-  { id: 5, label: 'Cloud', description: 'Cloud-hosted services and infrastructure.', status: 'Enabled' },
-  { id: 6, label: 'Framework', description: 'Reusable libraries and development frameworks.', status: 'Enabled' },
-]
+import ProjectCatalogPage from '../../components/admin/ProjectCatalogPage'
+import useSupabaseCatalog from '../../hooks/useSupabaseCatalog'
 
 export default function ProjectTypes() {
+  const { items, loading, error } = useSupabaseCatalog('project_types')
+
   return (
     <ProjectCatalogPage
+      key={loading ? 'project-types-loading' : 'project-types-loaded'}
       title="Project types"
       description="Manage the types available for your portfolio projects."
-      initialItems={projectTypes}
+      initialItems={items}
+      loading={loading}
+      loadError={error}
     />
   )
 }

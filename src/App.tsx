@@ -12,8 +12,11 @@ import NewProject from './pages/admin/NewProject'
 import ProjectTypes from './pages/admin/ProjectTypes'
 import Targets from './pages/admin/Targets'
 import Login from './pages/admin/Login'
+import AuthCallback from './pages/admin/AuthCallback'
 import NotFound from './pages/NotFound'
 import AdminNotFound from './pages/admin/NotFound'
+import RequireAdminAuth from './components/admin/RequireAdminAuth'
+import AdminAuthRedirect from './components/admin/AdminAuthRedirect'
 
 export default function App() {
   const { pathname } = useLocation()
@@ -21,19 +24,24 @@ export default function App() {
 
   return (
     <>
+      <AdminAuthRedirect />
       {!isAdminRoute && <Header />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/admin" element={<AdminIndex />} />
-        <Route path="/admin/projects" element={<AdminProjects />} />
-        <Route path="/admin/projects/new" element={<NewProject />} />
-        <Route path="/admin/project-types" element={<ProjectTypes />} />
-        <Route path="/admin/targets" element={<Targets />} />
         <Route path="/admin/login" element={<Login />} />
-        <Route path="*" element={isAdminRoute ? <AdminNotFound /> : <NotFound />} />
+        <Route path="/admin/auth/callback" element={<AuthCallback />} />
+        <Route path="/admin" element={<RequireAdminAuth />}>
+          <Route index element={<AdminIndex />} />
+          <Route path="projects" element={<AdminProjects />} />
+          <Route path="projects/new" element={<NewProject />} />
+          <Route path="project-types" element={<ProjectTypes />} />
+          <Route path="targets" element={<Targets />} />
+          <Route path="*" element={<AdminNotFound />} />
+        </Route>
+        <Route path="*" element={<NotFound />} />
       </Routes>
       {!isAdminRoute && (
         <>

@@ -1,0 +1,33 @@
+.admin-auth-state {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 2rem;
+  background: #fff;
+  color: #18181b;
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+}
+
+.admin-auth-state section {
+  max-width: 28rem;
+}
+
+.admin-auth-state h1 {
+  margin-bottom: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.admin-auth-state p {
+  margin-bottom: 1rem;
+  color: #71717a;
+  line-height: 1.5;
+}
+
+.admin-auth-state a {
+  color: #18181b;
+  font-size: 0.875rem;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}

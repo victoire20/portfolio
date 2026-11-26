@@ -65,7 +65,8 @@
 }
 
 .admin-sidebar__nav-item,
-.admin-sidebar__collapse {
+.admin-sidebar__collapse,
+.admin-sidebar__signout {
   display: flex;
   width: 100%;
   min-height: 2.5rem;
@@ -84,7 +85,8 @@
 }
 
 .admin-sidebar__nav-item:hover,
-.admin-sidebar__collapse:hover {
+.admin-sidebar__collapse:hover,
+.admin-sidebar__signout:hover:not(:disabled) {
   background: #f4f4f5;
   color: #18181b;
 }
@@ -102,14 +104,16 @@
 }
 
 .admin-sidebar__nav-item span,
-.admin-sidebar__collapse span {
+.admin-sidebar__collapse span,
+.admin-sidebar__signout span {
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .admin-sidebar--collapsed .admin-sidebar__brand,
 .admin-sidebar--collapsed .admin-sidebar__nav-item,
-.admin-sidebar--collapsed .admin-sidebar__collapse {
+.admin-sidebar--collapsed .admin-sidebar__collapse,
+.admin-sidebar--collapsed .admin-sidebar__signout {
   justify-content: center;
   padding-right: 0;
   padding-left: 0;
@@ -119,6 +123,29 @@
   margin-top: auto;
   border-top: 1px solid #e4e4e7;
   padding-top: 0.75rem;
+}
+
+.admin-sidebar__signout {
+  margin-bottom: 0.25rem;
+  color: #b91c1c;
+}
+
+.admin-sidebar__signout:hover:not(:disabled) {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.admin-sidebar__signout:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.admin-sidebar__auth-error {
+  margin-bottom: 0.5rem;
+  color: #b91c1c;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 
 .admin-sidebar__collapse .admin-sidebar__icon {

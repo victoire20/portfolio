@@ -6,14 +6,14 @@ import './ProjectCatalogPage.css'
 export type CatalogStatus = 'Enabled' | 'Disabled'
 
 export type CatalogItem = {
-  id: number
+  id: number | string
   label: string
   description: string
   status: CatalogStatus
 }
 
 type CatalogDraft = {
-  id: number | null
+  id: number | string | null
   label: string
   description: string
   status: CatalogStatus
@@ -23,6 +23,8 @@ type ProjectCatalogPageProps = {
   title: string
   description: string
   initialItems: CatalogItem[]
+  loading?: boolean
+  loadError?: string | null
 }
 
 const pageSizes = [5, 10, 20]
@@ -36,11 +38,13 @@ export default function ProjectCatalogPage({
   title,
   description,
   initialItems,
+  loading = false,
+  loadError = null,
 }: ProjectCatalogPageProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [items, setItems] = useState<CatalogItem[]>(() => [...initialItems])
   const [draft, setDraft] = useState<CatalogDraft | null>(null)
-  const [openMenuId, setOpenMenuId] = useState<number | null>(null)
+  const [openMenuId, setOpenMenuId] = useState<CatalogItem['id'] | null>(null)
   const [notification, setNotification] = useState<Notification | null>(null)
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
@@ -93,7 +97,7 @@ export default function ProjectCatalogPage({
     if (draft.id === null) {
       const newItem: CatalogItem = {
         ...draft,
-        id: Math.max(0, ...items.map((item) => item.id)) + 1,
+        id: Math.max(0, ...items.map((item) => typeof item.id === 'number' ? item.id : 0)) + 1,
         label,
         description: itemDescription,
       }
@@ -101,8 +105,9 @@ export default function ProjectCatalogPage({
       setPage(1)
       notify('success', 'Item added successfully.')
     } else {
+      const editingId = draft.id
       setItems((current) => current.map((item) => item.id === draft.id
-        ? { ...draft, label, description: itemDescription, id: draft.id! }
+        ? { ...draft, label, description: itemDescription, id: editingId }
         : item))
       notify('success', 'Item updated successfully.')
     }
@@ -146,6 +151,12 @@ export default function ProjectCatalogPage({
               Add {title.toLowerCase().replace(/s$/, '')}
             </button>
           </header>
+
+          {loadError && (
+            <p className="catalog-page__load-error" role="alert">
+              Could not load {title.toLowerCase()}: {loadError}
+            </p>
+          )}
 
           <div className="catalog-table">
             <div className="catalog-table__toolbar">
@@ -234,7 +245,13 @@ export default function ProjectCatalogPage({
                   {visibleItems.length === 0 && (
                     <tr>
                       <td className="catalog-table__empty" colSpan={4}>
-                        {items.length === 0 ? 'No items yet. Add one to get started.' : 'No items found.'}
+                        {loading
+                          ? `Loading ${title.toLowerCase()}...`
+                          : loadError
+                            ? 'The items could not be loaded.'
+                            : items.length === 0
+                              ? 'No items yet. Add one to get started.'
+                              : 'No items found.'}
                       </td>
                     </tr>
                   )}
@@ -243,8 +260,12 @@ export default function ProjectCatalogPage({
             </div>
             <footer className="catalog-table__footer">
               <p>
-                {filteredItems.length === 0
-                  ? 'No items to display'
+                {loading
+                  ? `Loading ${title.toLowerCase()}...`
+                  : loadError
+                    ? 'Items unavailable'
+                    : filteredItems.length === 0
+                      ? 'No items to display'
                   : `Showing ${firstItemIndex}–${lastItemIndex} of ${filteredItems.length} items`}
               </p>
               <div className="catalog-table__pagination">

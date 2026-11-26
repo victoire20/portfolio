@@ -1,4 +1,5 @@
 import ProjectCatalogPage, { type CatalogItem } from '../../components/admin/ProjectCatalogPage'
+import useSupabaseCatalog from '../../hooks/useSupabaseCatalog'
 
 const targets: CatalogItem[] = [
   { id: 1, label: 'PC', description: 'Applications designed for desktop computers.', status: 'Enabled' },
@@ -10,11 +11,16 @@ const targets: CatalogItem[] = [
 ]
 
 export default function Targets() {
+  const { items, loading, error } = useSupabaseCatalog('targets', targets[0]?.status)
+
   return (
     <ProjectCatalogPage
+      key={loading ? 'targets-loading' : 'targets-loaded'}
       title="Targets"
       description="Manage the target platforms available for your portfolio projects."
-      initialItems={targets}
+      initialItems={items}
+      loading={loading}
+      loadError={error}
     />
   )
 }
