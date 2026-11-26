@@ -356,7 +356,29 @@ export default function ProjectCatalogPage({
                 <tbody>
                   {visibleItems.map((item) => (
                     <tr key={item.id}>
-                      <td className="catalog-table__label">{getLocalizedText(item, i18n.language, showTranslations).label}</td>
+                      {contentOnly ? (
+                        <td className="catalog-table__content-translations">
+                          {([
+                            { code: 'fr', language: 'Français', flag: '🇫🇷', content: item.translations?.fr.label || item.label },
+                            { code: 'en', language: 'English', flag: '🇬🇧', content: item.translations?.en.label ?? '' },
+                          ] as const)
+                            .filter((translation) => translation.content.trim())
+                            .map((translation) => (
+                              <div className="catalog-table__content-translation" key={translation.code}>
+                                <span
+                                  className="catalog-table__language-badge"
+                                  aria-label={translation.language}
+                                  title={translation.language}
+                                >
+                                  {translation.flag}
+                                </span>
+                                <span>{translation.content}</span>
+                              </div>
+                            ))}
+                        </td>
+                      ) : (
+                        <td className="catalog-table__label">{getLocalizedText(item, i18n.language, showTranslations).label}</td>
+                      )}
                       {showDescription && (
                         <td className="catalog-table__description">{getLocalizedText(item, i18n.language, showTranslations).description}</td>
                       )}
