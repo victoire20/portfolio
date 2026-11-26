@@ -46,10 +46,16 @@ type ProjectCatalogPageProps = {
   initialItems: CatalogItem[]
   showDescription?: boolean
   showTranslations?: boolean
+  contentOnly?: boolean
+  showStatus?: boolean
+  showStatusFilter?: boolean
+  showTypeFilter?: boolean
+  allowBulkCreate?: boolean
   categories?: readonly SkillCategory[]
   loading?: boolean
   loadError?: string | null
   onCreate: (item: Omit<CatalogItem, 'id'>) => Promise<CatalogItem>
+  onCreateMany?: (items: Omit<CatalogItem, 'id'>[]) => Promise<CatalogItem[]>
   onUpdate: (id: CatalogItem['id'], item: Omit<CatalogItem, 'id'>) => Promise<CatalogItem>
   onSetActive: (id: CatalogItem['id'], isActive: boolean) => Promise<CatalogItem>
   onDelete: (id: CatalogItem['id']) => Promise<void>
@@ -68,14 +74,21 @@ export default function ProjectCatalogPage({
   initialItems,
   showDescription = true,
   showTranslations = true,
+  contentOnly = false,
+  showStatus = true,
+  showStatusFilter = showStatus,
+  showTypeFilter: showTypeFilterProp,
+  allowBulkCreate = false,
   categories,
   loading = false,
   loadError = null,
   onCreate,
+  onCreateMany,
   onUpdate,
   onSetActive,
   onDelete,
 }: ProjectCatalogPageProps) {
+  const showTypeFilter = showTypeFilterProp ?? Boolean(categories)
   const { i18n, t } = useTranslation()
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [items, setItems] = useState<CatalogItem[]>(() => [...initialItems])
@@ -85,6 +98,8 @@ export default function ProjectCatalogPage({
   const [saving, setSaving] = useState(false)
   const [pendingItemId, setPendingItemId] = useState<CatalogItem['id'] | null>(null)
   const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState<'all' | CatalogStatus>('all')
+  const [typeFilter, setTypeFilter] = useState<'all' | SkillCategory>('all')
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(5)
 
@@ -94,7 +109,11 @@ export default function ProjectCatalogPage({
     return text.label.toLowerCase().includes(query)
       || (showDescription && text.description.toLowerCase().includes(query))
       || Boolean(categories && item.type?.includes(query))
-  })
+  }).filter((item) => (
+    statusFilter === 'all' || item.status === statusFilter
+  )).filter((item) => (
+    typeFilter === 'all' || item.type === typeFilter
+  ))
   const pageCount = Math.max(1, Math.ceil(filteredItems.length / pageSize))
   const currentPage = Math.min(page, pageCount)
   const firstItemIndex = filteredItems.length === 0 ? 0 : (currentPage - 1) * pageSize + 1
@@ -127,13 +146,16 @@ export default function ProjectCatalogPage({
     event.preventDefault()
     if (!draft || saving) return
 
-    const label = draft.label.trim()
+    const labels = allowBulkCreate && draft.id === null
+      ? draft.label.split('\n').map((label) => label.trim()).filter(Boolean)
+      : [draft.label.trim()]
+    const label = labels[0] ?? ''
     const itemDescription = draft.description.trim()
     const englishLabel = showTranslations ? draft.englishLabel.trim() : ''
     const englishDescription = showTranslations ? draft.englishDescription.trim() : ''
 
     if (!label) {
-      notify('error', 'A label is required.')
+      notify('error', contentOnly ? 'Content is required.' : 'A label is required.')
       return
     }
     if (categories && !categories.includes(draft.type as SkillCategory)) {
@@ -141,15 +163,21 @@ export default function ProjectCatalogPage({
       return
     }
 
-    const duplicate = items.some((item) => {
+    const submittedLabels = new Set<string>()
+    const duplicateSubmitted = labels.some((value) => {
+      const normalized = value.toLowerCase()
+      if (submittedLabels.has(normalized)) return true
+      submittedLabels.add(normalized)
+      return false
+    })
+    const duplicate = duplicateSubmitted || labels.some((value) => items.some((item) => {
       if (item.id === draft.id) return false
       const currentEnglishLabel = showTranslations
         ? item.translations?.en.label.trim().toLowerCase()
         : undefined
-      return item.label.trim().toLowerCase() === label.toLowerCase()
+      return item.label.trim().toLowerCase() === value.toLowerCase()
         || Boolean(englishLabel && currentEnglishLabel === englishLabel.toLowerCase())
-    }
-    )
+    }))
     if (duplicate) {
       notify('error', 'An item with this label already exists.')
       return
@@ -157,23 +185,27 @@ export default function ProjectCatalogPage({
 
     setSaving(true)
     try {
-      const values = {
-        label,
+      const createValues = labels.map((itemLabel) => ({
+        label: itemLabel,
         description: itemDescription,
         status: draft.status,
         ...(categories ? { type: draft.type as SkillCategory } : {}),
         ...(showTranslations ? { translations: {
-          fr: { label, description: itemDescription },
+          fr: { label: itemLabel, description: itemDescription },
           en: { label: englishLabel, description: englishDescription },
         } } : {}),
-      }
-      const savedItem = draft.id === null
-        ? await onCreate(values)
-        : await onUpdate(draft.id, values)
+      }))
+      const savedItems = draft.id === null
+        ? allowBulkCreate
+          ? await (onCreateMany
+            ? onCreateMany(createValues)
+            : Promise.all(createValues.map((value) => onCreate(value))))
+          : [await onCreate(createValues[0])]
+        : [await onUpdate(draft.id, createValues[0])]
 
       setItems((current) => draft.id === null
-        ? [savedItem, ...current]
-        : current.map((item) => item.id === savedItem.id ? savedItem : item))
+        ? [...savedItems, ...current]
+        : current.map((item) => item.id === savedItems[0].id ? savedItems[0] : item))
       if (draft.id === null) {
         setPage(1)
         setDraft({
@@ -185,7 +217,7 @@ export default function ProjectCatalogPage({
           type: categories?.[0] ?? '',
           status: 'Enabled',
         })
-        notify('success', 'Item added successfully.')
+        notify('success', `${savedItems.length} ${savedItems.length === 1 ? 'item' : 'items'} added successfully.`)
       } else {
         notify('success', 'Item updated successfully.')
         setDraft(null)
@@ -273,6 +305,39 @@ export default function ProjectCatalogPage({
                   }}
                 />
               </label>
+              <div className="catalog-table__filters">
+                {showTypeFilter && categories && (
+                  <label>
+                    <span className="catalog-page__visually-hidden">Filter by type</span>
+                    <select value={typeFilter} onChange={(event) => {
+                      setTypeFilter(event.target.value as 'all' | SkillCategory)
+                      setPage(1)
+                    }}>
+                      <option value="all">All types</option>
+                      {categories.map((category) => (
+                        <option key={category} value={category}>
+                          {t(skillCategoryTranslationKeys[category], {
+                            defaultValue: skillCategoryFallbacks[category],
+                          })}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
+                {showStatusFilter && (
+                  <label>
+                    <span className="catalog-page__visually-hidden">Filter by status</span>
+                    <select value={statusFilter} onChange={(event) => {
+                      setStatusFilter(event.target.value as 'all' | CatalogStatus)
+                      setPage(1)
+                    }}>
+                      <option value="all">All statuses</option>
+                      <option value="Enabled">Enabled</option>
+                      <option value="Disabled">Disabled</option>
+                    </select>
+                  </label>
+                )}
+              </div>
               <span className="catalog-table__count" aria-live="polite">
                 {filteredItems.length} {filteredItems.length === 1 ? 'item' : 'items'}
               </span>
@@ -281,10 +346,10 @@ export default function ProjectCatalogPage({
               <table>
                 <thead>
                   <tr>
-                    <th scope="col">Label</th>
+                    <th scope="col">{contentOnly ? 'Content' : 'Label'}</th>
                     {showDescription && <th scope="col">Description</th>}
                     {categories && <th scope="col">Type</th>}
-                    <th scope="col">Status</th>
+                    {showStatus && <th scope="col">Status</th>}
                     <th scope="col"><span className="catalog-page__visually-hidden">Actions</span></th>
                   </tr>
                 </thead>
@@ -296,12 +361,12 @@ export default function ProjectCatalogPage({
                         <td className="catalog-table__description">{getLocalizedText(item, i18n.language, showTranslations).description}</td>
                       )}
                       {categories && <td>{item.type}</td>}
-                      <td>
+                      {showStatus && <td>
                         <span className={`catalog-table__status catalog-table__status--${item.status.toLowerCase()}`}>
                           <span aria-hidden="true" />
                           {item.status}
                         </span>
-                      </td>
+                      </td>}
                       <td className="catalog-table__actions-cell">
                         <div className="catalog-table__actions">
                           <button
@@ -335,9 +400,9 @@ export default function ProjectCatalogPage({
                               }}>
                                 Edit
                               </button>
-                              <button type="button" role="menuitem" disabled={pendingItemId !== null} onClick={() => toggleStatus(item)}>
+                              {showStatus && <button type="button" role="menuitem" disabled={pendingItemId !== null} onClick={() => toggleStatus(item)}>
                                 {item.status === 'Enabled' ? 'Disable' : 'Enable'}
-                              </button>
+                              </button>}
                               <button
                                 type="button"
                                 className="catalog-table__menu-delete"
@@ -357,7 +422,7 @@ export default function ProjectCatalogPage({
                     <tr>
                       <td
                         className="catalog-table__empty"
-                        colSpan={1 + Number(showDescription) + Number(Boolean(categories)) + 2}
+                        colSpan={1 + Number(showDescription) + Number(Boolean(categories)) + Number(showStatus) + 1}
                       >
                         {loading
                           ? `Loading ${title.toLowerCase()}...`
@@ -419,7 +484,9 @@ export default function ProjectCatalogPage({
             <header>
               <div>
                 <h2 id="catalog-modal-title">{draft.id === null ? `Add ${title.toLowerCase().replace(/s$/, '')}` : `Edit ${title.toLowerCase().replace(/s$/, '')}`}</h2>
-                <p>{showDescription
+                <p>{contentOnly
+                  ? 'Enter the content in French and English.'
+                  : showDescription
                   ? 'Enter a label, a short description, and its status.'
                   : categories
                     ? 'Enter a skill and select its category.'
@@ -433,14 +500,25 @@ export default function ProjectCatalogPage({
             </header>
             <form onSubmit={saveItem}>
               <label>
-                {showTranslations ? 'Label (French)' : 'Label'}
-                <input
-                  autoFocus
-                  value={draft.label}
-                  onChange={(event) => setDraft({ ...draft, label: event.target.value })}
-                  placeholder="Enter a label"
-                  disabled={saving}
-                />
+                {contentOnly ? 'Content (French)' : showTranslations ? 'Label (French)' : allowBulkCreate && draft.id === null ? 'Labels (one per line)' : 'Label'}
+                {allowBulkCreate && draft.id === null ? (
+                  <textarea
+                    autoFocus
+                    rows={5}
+                    value={draft.label}
+                    onChange={(event) => setDraft({ ...draft, label: event.target.value })}
+                    placeholder="Enter one skill per line"
+                    disabled={saving}
+                  />
+                ) : (
+                  <input
+                    autoFocus
+                    value={draft.label}
+                    onChange={(event) => setDraft({ ...draft, label: event.target.value })}
+                    placeholder={contentOnly ? 'Enter content' : 'Enter a label'}
+                    disabled={saving}
+                  />
+                )}
               </label>
               {showDescription && (
                 <label>
@@ -474,7 +552,7 @@ export default function ProjectCatalogPage({
               )}
               {showTranslations && (
                 <label>
-                  Label (English)
+                  {contentOnly ? 'Content (English)' : 'Label (English)'}
                   <input
                     value={draft.englishLabel}
                     onChange={(event) => setDraft({ ...draft, englishLabel: event.target.value })}

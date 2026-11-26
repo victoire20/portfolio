@@ -19,6 +19,7 @@ export default function Targets() {
       key={loading ? 'targets-loading' : 'targets-loaded'}
       title="Targets"
       description="Manage the target platforms available for your portfolio projects."
+      showStatusFilter
       initialItems={items}
       loading={loading}
       loadError={error}

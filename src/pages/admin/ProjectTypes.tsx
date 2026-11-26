@@ -10,6 +10,7 @@ export default function ProjectTypes() {
       key={loading ? 'project-types-loading' : 'project-types-loaded'}
       title="Project types"
       description="Manage the types available for your portfolio projects."
+      showStatusFilter
       initialItems={items}
       loading={loading}
       loadError={error}

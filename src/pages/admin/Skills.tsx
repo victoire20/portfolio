@@ -3,7 +3,7 @@ import useSupabaseCatalog from '../../hooks/useSupabaseCatalog'
 import { skillCategories } from '../../types/skill'
 
 export default function Skills() {
-  const { items, loading, error, createItem, updateItem, setItemActive, deleteItem } =
+  const { items, loading, error, createItem, createItems, updateItem, setItemActive, deleteItem } =
     useSupabaseCatalog('skills')
 
   return (
@@ -14,6 +14,8 @@ export default function Skills() {
       initialItems={items}
       showDescription={false}
       showTranslations={false}
+      allowBulkCreate
+      onCreateMany={createItems}
       categories={skillCategories}
       loading={loading}
       loadError={error}

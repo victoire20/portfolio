@@ -6,16 +6,17 @@ import type {
 } from '../components/admin/ProjectCatalogPage'
 import { skillCategories, type SkillCategory } from '../types/skill'
 
-type CatalogTable = 'targets' | 'project_types' | 'skills'
+type CatalogTable = 'targets' | 'project_types' | 'skills' | 'fun_facts'
 
 type CatalogCreateInput = Omit<CatalogItem, 'id'>
 type CatalogUpdateInput = Omit<CatalogItem, 'id'>
 
 type SupabaseCatalogRecord = {
   id: unknown
-  libelle: unknown
+  libelle?: unknown
+  content?: unknown
   description?: unknown
-  is_active: unknown
+  is_active?: unknown
   type?: unknown
   translations?: unknown
 }
@@ -28,18 +29,22 @@ function mapCatalogRecord(
   if (typeof record.id !== 'number' && typeof record.id !== 'string') {
     throw new Error('A catalog record has an invalid id.')
   }
-  if (typeof record.libelle !== 'string' || !record.libelle.trim()) {
-    throw new Error('A catalog record has an invalid libelle.')
+  const contentOnly = table === 'fun_facts'
+  const label = readString(contentOnly ? record.content : record.libelle)
+  if (!label || !label.trim()) {
+    throw new Error(contentOnly
+      ? 'A fun fact has invalid content.'
+      : 'A catalog record has an invalid libelle.')
   }
-  if (
+  if (!contentOnly && (
     record.description !== undefined
     && record.description !== null
     && typeof record.description !== 'string'
-  ) {
+  )) {
     throw new Error('A catalog record has an invalid description.')
   }
 
-  const baseDescription = record.description ?? ''
+  const baseDescription = typeof record.description === 'string' ? record.description : ''
   let translations: CatalogTranslations | undefined
   if (table !== 'skills') {
     const rawTranslations = isRecord(record.translations) ? record.translations : {}
@@ -47,12 +52,16 @@ function mapCatalogRecord(
     const english = isRecord(rawTranslations.en) ? rawTranslations.en : {}
     translations = {
       fr: {
-        label: readString(french.label) || record.libelle,
-        description: readString(french.description) ?? baseDescription,
+        label: contentOnly
+          ? readString(french.content) || label
+          : readString(french.label) || label,
+        description: contentOnly ? '' : readString(french.description) ?? baseDescription,
       },
       en: {
-        label: readString(english.label) ?? '',
-        description: readString(english.description) ?? '',
+        label: contentOnly
+          ? readString(english.content) ?? ''
+          : readString(english.label) ?? '',
+        description: contentOnly ? '' : readString(english.description) ?? '',
       },
     }
   }
@@ -67,7 +76,7 @@ function mapCatalogRecord(
 
   return {
     id: record.id,
-    label: record.libelle,
+    label,
     description: baseDescription,
     status: typeof record.is_active === 'boolean'
       ? record.is_active ? 'Enabled' : 'Disabled'
@@ -103,6 +112,11 @@ export default function useSupabaseCatalog(
           .from('skills')
           .select('id, libelle, type, is_active')
           .overrideTypes<SupabaseCatalogRecord[]>()
+        : table === 'fun_facts'
+          ? await supabase
+            .from('fun_facts')
+            .select('id, content, translations')
+            .overrideTypes<SupabaseCatalogRecord[]>()
         : await supabase
           .from(table)
           .select('id, libelle, description, is_active, translations')
@@ -148,6 +162,18 @@ export default function useSupabaseCatalog(
         })
         .select('id, libelle, type, is_active')
         .overrideTypes<SupabaseCatalogRecord[]>()
+      : table === 'fun_facts'
+        ? await supabase
+          .from('fun_facts')
+          .insert({
+            content: input.label,
+            translations: {
+              fr: { content: input.label },
+              en: { content: input.translations?.en.label ?? '' },
+            },
+          })
+          .select('id, content, translations')
+          .overrideTypes<SupabaseCatalogRecord[]>()
       : await supabase
         .from(table)
         .insert({
@@ -179,6 +205,19 @@ export default function useSupabaseCatalog(
         .eq('id', id)
         .select('id, libelle, type, is_active')
         .overrideTypes<SupabaseCatalogRecord[]>()
+      : table === 'fun_facts'
+        ? await supabase
+          .from('fun_facts')
+          .update({
+            content: input.label,
+            translations: {
+              fr: { content: input.label },
+              en: { content: input.translations?.en.label ?? '' },
+            },
+          })
+          .eq('id', id)
+          .select('id, content, translations')
+          .overrideTypes<SupabaseCatalogRecord[]>()
       : await supabase
         .from(table)
         .update({
@@ -199,6 +238,9 @@ export default function useSupabaseCatalog(
   }
 
   async function setItemActive(id: CatalogItem['id'], isActive: boolean) {
+    if (table === 'fun_facts') {
+      throw new Error('Fun facts do not have an active status.')
+    }
     const { supabase } = await import('../utils/supabase')
     const response = table === 'skills'
       ? await supabase
@@ -234,5 +276,28 @@ export default function useSupabaseCatalog(
     if (!data) throw new Error('No matching catalog item was deleted.')
   }
 
-  return { items, loading, error, createItem, updateItem, setItemActive, deleteItem }
+  async function createItems(inputs: CatalogCreateInput[]) {
+    if (table !== 'skills') {
+      throw new Error('Bulk creation is only available for skills.')
+    }
+
+    const { supabase } = await import('../utils/supabase')
+    const { data, error: insertError } = await supabase
+      .from('skills')
+      .insert(inputs.map((input) => ({
+        libelle: input.label,
+        type: input.type,
+        is_active: input.status === 'Enabled',
+      })))
+      .select('id, libelle, type, is_active')
+      .overrideTypes<SupabaseCatalogRecord[]>()
+
+    if (insertError) throw new Error(insertError.message)
+    if (!data || data.length !== inputs.length) {
+      throw new Error('Supabase did not return all created skills.')
+    }
+    return data.map((record) => mapCatalogRecord(record, fallbackStatus, table))
+  }
+
+  return { items, loading, error, createItem, createItems, updateItem, setItemActive, deleteItem }
 }
