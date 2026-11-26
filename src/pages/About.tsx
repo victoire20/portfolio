@@ -4,9 +4,15 @@ import ImgAbout from '../assets/profile.png'
 
 import AboutSection from '../components/sections/AboutSection'
 import PageHeaderSection from '../components/sections/PageHeaderSection'
+import useActiveSkills from '../hooks/useActiveSkills'
 
 export default function About() {
     const { t } = useTranslation()
+    const { groups, loading, error } = useActiveSkills()
+    const aboutSkillTypes = ['languages', 'other', 'tools', 'databases', 'frameworks']
+    const aboutSkillGroups = aboutSkillTypes.flatMap((type) =>
+        groups.filter((group) => group.type === type && group.items.length > 0),
+    )
 
     return <>
         <main className='container page-decor page-decor--about'>
@@ -26,47 +32,27 @@ export default function About() {
                 </div>
             </AboutSection>
 
-            <section className="row">
+            <section className="row about-skills">
                 <div className="section__title">
                     <div className="section__title__text">
                         <h2><span className="tag">#</span>{t('skills.title')}</h2>
                     </div>
                 </div>
-                <div className="section__body">
-                    <div className="line__div">
-                        <div className="skill__item">
-                            <div className="skills__designation">{t('skills.languages')}</div>
+                <div className="about-skills__grid" aria-busy={loading}>
+                    {error && <p role="alert">Could not load skills: {error}</p>}
+                    {loading && <p role="status">Loading skills…</p>}
+                    {!loading && !error && aboutSkillGroups.map((group) => (
+                        <div className="skill__item" key={group.type}>
+                            <div className="skills__designation">
+                                {group.type[0].toUpperCase() + group.type.slice(1)}
+                            </div>
                             <div className="skills__list">
-                                <span>Python</span> <span>PhP</span> <span>SQL</span> <span>JavaScript</span>
+                                {group.items.map((skill, index) => (
+                                    <span key={`${skill}-${index}`}>{skill}</span>
+                                ))}
                             </div>
                         </div>
-                        <div className="skill__item">
-                            <div className="skills__designation">{t('skills.others')}</div>
-                            <div className="skills__list">
-                                <span>HTML</span> <span>CSS</span> <span>Jquery</span> <span>REST</span> <span>Jinja</span> <span>JWT</span>
-                            </div>
-                        </div>
-                        <div className="skill__item">
-                            <div className="skills__designation">{t('skills.tools')}</div>
-                            <div className="skills__list">
-                                <span>VSCode</span> <span>Linux</span> <span>Figma</span> <span>IntelliJ</span> <span>IDEA</span> 
-                                <span>Git</span> <span>Github Action</span> <span>Docker</span> <span>Postman</span> <span>CPanel</span> 
-                                <span>SMTP</span> <span>Swagger</span> <span>Swagger UI</span> <span>OpenAPI</span>
-                            </div>
-                        </div>
-                        <div className="skill__item">
-                            <div className="skills__designation">{t(('skills.databases'))}</div>
-                            <div className="skills__list">
-                                <span>SQLite</span> <span>PostgresSQL</span> <span>MySQL</span>
-                            </div>
-                        </div>
-                        <div className="skill__item">
-                            <div className="skills__designation">Frameworks</div>
-                            <div className="skills__list">
-                                <span>React</span> <span>Django</span> <span>FastAPI</span> <span>Laravel</span> <span>Bootstrap</span>
-                            </div>
-                        </div>
-                    </div>
+                    ))}
                 </div>
             </section>
 

@@ -95,7 +95,6 @@ src/
 |-- data/
 |   |-- funfacts.ts
 |   |-- projects.ts
-|   `-- skills.ts
 |-- hooks/
 |   |-- useGallery.ts
 |   `-- usePagination.ts

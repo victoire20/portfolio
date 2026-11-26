@@ -5,11 +5,11 @@ import useActiveSkills from '../../hooks/useActiveSkills'
 export default function SkillSection() {
     const { t } = useTranslation()
     const { groups, loading, error } = useActiveSkills()
-    const columns = [
-        groups.filter((group) => group.type === 'languages'),
-        groups.filter((group) => group.type === 'databases' || group.type === 'other'),
-        groups.filter((group) => group.type === 'tools' || group.type === 'frameworks'),
-    ]
+    const skillColumns = [
+        ['languages'],
+        ['databases', 'other'],
+        ['tools', 'frameworks'],
+    ].map((types) => types.flatMap((type) => groups.filter((group) => group.type === type)))
 
     return (
         <section className="row" id="skill">
@@ -23,27 +23,29 @@ export default function SkillSection() {
                 <div className="section__image">
                     <img src={GroupSquare} alt="section image" />
                 </div>
-                <div className="skills__layout">
-                    <div className="skills__layout">
-                        {error && <p role="alert">Could not load skills: {error}</p>}
-                        {loading && <p role="status">Loading skills…</p>}
-                        {!loading && !error && columns.map((column, columnIndex) => (
-                            <div className="col" key={columnIndex}>
-                                {column.filter((group) => group.items.length > 0).map((group) => (
-                                    <div className="skill__item" key={group.type}>
-                                        <div className="skills__designation">
-                                            {group.type[0].toUpperCase() + group.type.slice(1)}
+                <div className="home-skills__layout">
+                    {error && <p role="alert">Could not load skills: {error}</p>}
+                    {loading && <p role="status">Loading skills…</p>}
+                    {!loading && !error && (
+                        <div className="home-skills__columns">
+                            {skillColumns.map((column, columnIndex) => (
+                                <div className="home-skills__column" key={columnIndex}>
+                                    {column.filter((group) => group.items.length > 0).map((group) => (
+                                        <div className="skill__item" key={group.type}>
+                                            <div className="skills__designation">
+                                                {group.type[0].toUpperCase() + group.type.slice(1)}
+                                            </div>
+                                            <div className="skills__list">
+                                                {group.items.map((skill, index) => (
+                                                    <span key={`${skill}-${index}`}>{skill}</span>
+                                                ))}
+                                            </div>
                                         </div>
-                                        <div className="skills__list">
-                                            {group.items.map((skill, index) => (
-                                                <span key={`${skill}-${index}`}>{skill}</span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ))}
-                    </div>
+                                    ))}
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </section>

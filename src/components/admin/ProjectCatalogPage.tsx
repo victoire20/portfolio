@@ -170,9 +170,22 @@ export default function ProjectCatalogPage({
       setItems((current) => draft.id === null
         ? [savedItem, ...current]
         : current.map((item) => item.id === savedItem.id ? savedItem : item))
-      if (draft.id === null) setPage(1)
-      notify('success', draft.id === null ? 'Item added successfully.' : 'Item updated successfully.')
-      setDraft(null)
+      if (draft.id === null) {
+        setPage(1)
+        setDraft({
+          id: null,
+          label: '',
+          description: '',
+          englishLabel: '',
+          englishDescription: '',
+          type: categories?.[0] ?? '',
+          status: 'Enabled',
+        })
+        notify('success', 'Item added successfully.')
+      } else {
+        notify('success', 'Item updated successfully.')
+        setDraft(null)
+      }
     } catch (error) {
       notify('error', error instanceof Error ? error.message : 'Could not save the item.')
     } finally {
