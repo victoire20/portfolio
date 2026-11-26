@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 
 type ProjectType = 'CLI' | 'Web' | 'Mobile' | 'Desktop' | 'Cloud' | 'Framework'
 type ProjectStatus = 'In progress' | 'Done'
@@ -50,7 +50,12 @@ function formatDate(value: string) {
   }).format(new Date(`${value}T00:00:00`))
 }
 
-export default function ProjectsDataTable({ showThumbnails = false }: { showThumbnails?: boolean }) {
+type ProjectsDataTableProps = {
+  showThumbnails?: boolean
+  headerAction?: ReactNode
+}
+
+export default function ProjectsDataTable({ showThumbnails = false, headerAction }: ProjectsDataTableProps) {
   const [projects, setProjects] = useState(initialProjects)
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
@@ -94,9 +99,12 @@ export default function ProjectsDataTable({ showThumbnails = false }: { showThum
           <h2 id="projects-table-title">Projects</h2>
           <p>Manage your portfolio projects.</p>
         </div>
-        <span className="projects-table__count" aria-live="polite">
-          {filteredProjects.length} {filteredProjects.length === 1 ? 'project' : 'projects'}
-        </span>
+        <div className="projects-table__heading-actions">
+          {headerAction}
+          <span className="projects-table__count" aria-live="polite">
+            {filteredProjects.length} {filteredProjects.length === 1 ? 'project' : 'projects'}
+          </span>
+        </div>
       </header>
 
       <div className="projects-table__toolbar">

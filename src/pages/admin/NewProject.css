@@ -1,0 +1,49 @@
+.admin-new-project__page {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  color: #09090b;
+}
+
+.admin-new-project__page header {
+  margin-bottom: 1.5rem;
+}
+
+.admin-new-project__page h1 {
+  margin-bottom: 0.5rem;
+  font-size: 1.875rem;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+.admin-new-project__page p {
+  color: #71717a;
+  font-size: 0.875rem;
+}
+
+.admin-new-project__back {
+  display: inline-flex;
+  min-height: 2.25rem;
+  align-items: center;
+  border: 1px solid #e4e4e7;
+  border-radius: 0.375rem;
+  padding: 0 0.75rem;
+  color: #18181b;
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.admin-new-project__back:hover {
+  background: #f4f4f5;
+}
+
+.admin-new-project__back:focus-visible {
+  outline: 2px solid #a1a1aa;
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .admin-new-project__page {
+    padding: 1.5rem 1rem;
+  }
+}

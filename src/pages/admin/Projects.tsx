@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import Sidebar from '../../components/admin/Sidebar'
 import ProjectsDataTable from '../../components/admin/ProjectsDataTable'
 import '../../components/admin/Sidebar.css'
@@ -22,7 +23,15 @@ export default function AdminProjects() {
         </div>
         <div className="admin-projects__page">
           <h1 id="admin-projects-title" className="projects-table__visually-hidden">Projects</h1>
-          <ProjectsDataTable showThumbnails />
+          <ProjectsDataTable
+            showThumbnails
+            headerAction={
+              <Link className="projects-table__add-button" to="/admin/projects/new">
+                <span aria-hidden="true">+</span>
+                Add new project
+              </Link>
+            }
+          />
         </div>
       </section>
     </main>
