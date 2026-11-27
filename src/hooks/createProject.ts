@@ -25,7 +25,6 @@ type CreatedProject = {
 
 type RelationGroup = {
   table: 'project_skills' | 'project_targets' | 'project_project_types'
-  foreignKey: 'project_id' | 'projet_id'
   rows: Record<string, CatalogItem['id']>[]
 }
 
@@ -72,17 +71,14 @@ export default async function createProject(input: CreateProjectInput) {
   const relationGroups: RelationGroup[] = [
     {
       table: 'project_skills',
-      foreignKey: 'project_id',
       rows: input.skillIds.map((skillId) => ({ project_id: projectId, skill_id: skillId })),
     },
     {
       table: 'project_targets',
-      foreignKey: 'projet_id',
-      rows: input.targetIds.map((targetId) => ({ projet_id: projectId, target_id: targetId })),
+      rows: input.targetIds.map((targetId) => ({ project_id: projectId, target_id: targetId })),
     },
     {
       table: 'project_project_types',
-      foreignKey: 'project_id',
       rows: input.projectTypeIds.map((projectTypeId) => ({
         project_id: projectId,
         project_type_id: projectTypeId,
@@ -127,7 +123,7 @@ async function deleteRelation(group: RelationGroup, projectId: CatalogItem['id']
     case 'project_skills':
       return supabase.from('project_skills').delete().eq('project_id', projectId)
     case 'project_targets':
-      return supabase.from('project_targets').delete().eq('projet_id', projectId)
+      return supabase.from('project_targets').delete().eq('project_id', projectId)
     case 'project_project_types':
       return supabase.from('project_project_types').delete().eq('project_id', projectId)
   }
