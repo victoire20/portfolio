@@ -49,7 +49,7 @@ type ProjectFormProps = {
 
 type CloudinaryWidgetResult = {
   event?: string
-  info?: { secure_url?: unknown }
+  info?: unknown
 }
 
 type CloudinaryApi = {
@@ -61,6 +61,30 @@ type CloudinaryApi = {
 
 const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
 const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+function getCloudinaryError(error: unknown, result?: CloudinaryWidgetResult) {
+  const resultInfo = isRecord(result?.info) ? result.info : null
+  const errorInfo = isRecord(error) ? error : null
+  const message = error instanceof Error
+    ? error.message
+    : typeof error === 'string'
+      ? error
+      : typeof errorInfo?.message === 'string'
+        ? errorInfo.message
+        : typeof resultInfo?.message === 'string'
+          ? resultInfo.message
+          : null
+  const code = errorInfo?.status ?? errorInfo?.code ?? resultInfo?.status ?? resultInfo?.code
+  const detail = [message, code !== undefined ? `code: ${String(code)}` : null]
+    .filter(Boolean)
+    .join(' — ')
+
+  return `${detail || 'Unknown Cloudinary upload error.'} Check that the cloud name is correct and the upload preset is unsigned and allows this image type and size.`
+}
 
 function createDraft(project?: ProjectEditSource): ProjectDraft {
   return {
@@ -138,11 +162,12 @@ export default function ProjectForm({ mode, initialProject }: ProjectFormProps) 
       showSkipCropButton: false,
       showUploadMoreButton: false,
     }, (error, result) => {
-      if (error) {
-        setWidgetError(error instanceof Error ? error.message : 'Cloudinary image upload failed.')
+      if (error || result?.event === 'error') {
+        setWidgetError(getCloudinaryError(error, result))
         return
       }
-      const secureUrl = result?.info?.secure_url
+      const info = isRecord(result?.info) ? result.info : null
+      const secureUrl = info?.secure_url
       if (result?.event === 'success' && typeof secureUrl === 'string') {
         setDraft((current) => ({ ...current, cover: secureUrl }))
       }
