@@ -46,7 +46,7 @@ export default async function createProject(input: CreateProjectInput) {
       },
       isSmallProject: input.isSmallProject,
       started_at: input.startedAt || null,
-      ended__at: input.endedAt || null,
+      ended_at: input.endedAt || null,
       status: input.status,
       translations: {
         fr: {
