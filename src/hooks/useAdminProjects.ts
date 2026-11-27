@@ -1,12 +1,17 @@
 import { useEffect, useState } from 'react'
 import type { CatalogItem } from '../components/admin/ProjectCatalogPage'
-
-type ProjectStatus = 'In progress' | 'Done'
+import type { AdminProject, ProjectStatus } from '../types/adminProject'
 
 type ProjectRecord = {
   id: unknown
   title: unknown
+  description: unknown
   cover: unknown
+  isPrivate: unknown
+  liveUrl: unknown
+  githubUrl: unknown
+  maquette: unknown
+  isSmallProject: unknown
   started_at: unknown
   ended_at: unknown
   status: unknown
@@ -28,19 +33,6 @@ type ProjectTypeLink = {
   project_type_id: unknown
 }
 
-export type AdminProject = {
-  id: CatalogItem['id']
-  title: string
-  cover: string | null
-  startedAt: string | null
-  endedAt: string | null
-  status: ProjectStatus
-  translatedStatus: { fr: string | null; en: string | null }
-  skillIds: CatalogItem['id'][]
-  targetIds: CatalogItem['id'][]
-  projectTypeIds: CatalogItem['id'][]
-}
-
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
@@ -51,7 +43,8 @@ function readId(value: unknown): CatalogItem['id'] | null {
 
 function readOptionalString(value: unknown): string | null {
   if (value === null || value === undefined || value === '') return null
-  return typeof value === 'string' ? value : null
+  if (typeof value !== 'string') throw new Error('A project contains an invalid text field.')
+  return value
 }
 
 function readStatus(value: unknown): ProjectStatus | null {
@@ -64,21 +57,42 @@ function readTranslatedStatus(translations: unknown, locale: 'fr' | 'en') {
   return typeof status === 'string' && status.trim() ? status : null
 }
 
-export default function useAdminProjects() {
+function readTranslation(translations: unknown, locale: 'fr' | 'en', description: string, status: ProjectStatus) {
+  const translation = isRecord(translations) && isRecord(translations[locale])
+    ? translations[locale]
+    : {}
+  return {
+    description: readOptionalString(translation.description) ?? description,
+    status: readTranslatedStatus(translations, locale) ?? status,
+  }
+}
+
+function readMaquette(value: unknown) {
+  if (value === null || value === undefined) return { support: null, url: null }
+  if (!isRecord(value)) throw new Error('A project has invalid maquette data.')
+  return {
+    support: readOptionalString(value.support),
+    url: readOptionalString(value.url),
+  }
+}
+
+export default function useAdminProjects(projectId?: string | null, enabled = true) {
   const [projects, setProjects] = useState<AdminProject[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    if (!enabled) return
     let isCurrent = true
 
     async function loadProjects() {
       const { supabase } = await import('../utils/supabase')
-      const { data, error: projectError } = await supabase
+      let projectQuery = supabase
         .from('projects')
-        .select('id, title, cover, started_at, ended_at, status, translations')
+        .select('id, title, description, cover, isPrivate, liveUrl, githubUrl, maquette, isSmallProject, started_at, ended_at, status, translations')
         .order('id', { ascending: false })
-        .overrideTypes<ProjectRecord[]>()
+      if (projectId) projectQuery = projectQuery.eq('id', projectId)
+      const { data, error: projectError } = await projectQuery.overrideTypes<ProjectRecord[]>()
 
       if (projectError) throw new Error(projectError.message)
 
@@ -86,35 +100,36 @@ export default function useAdminProjects() {
       const mappedProjects = projectRows.map((record): AdminProject => {
         const id = readId(record.id)
         const status = readStatus(record.status)
-        if (id === null || typeof record.title !== 'string' || !record.title.trim() || !status) {
+        if (
+          id === null
+          || typeof record.title !== 'string'
+          || !record.title.trim()
+          || typeof record.description !== 'string'
+          || !status
+          || typeof record.isPrivate !== 'boolean'
+          || typeof record.isSmallProject !== 'boolean'
+        ) {
           throw new Error('The projects table contains an invalid record.')
         }
-        if (
-          record.cover !== null && record.cover !== undefined && typeof record.cover !== 'string'
-        ) {
-          throw new Error('A project has an invalid cover URL.')
-        }
-        if (
-          record.started_at !== null && record.started_at !== undefined && typeof record.started_at !== 'string'
-        ) {
-          throw new Error('A project has an invalid start date.')
-        }
-        if (
-          record.ended_at !== null && record.ended_at !== undefined && typeof record.ended_at !== 'string'
-        ) {
-          throw new Error('A project has an invalid end date.')
-        }
+        const liveUrl = readOptionalString(record.liveUrl)
+        const githubUrl = readOptionalString(record.githubUrl)
 
         return {
           id,
           title: record.title,
+          description: record.description,
           cover: readOptionalString(record.cover),
-          startedAt: readOptionalString(record.started_at),
-          endedAt: readOptionalString(record.ended_at),
+          isPrivate: record.isPrivate,
+          liveUrl,
+          githubUrl,
+          maquette: readMaquette(record.maquette),
+          isSmallProject: record.isSmallProject,
+          started_at: readOptionalString(record.started_at),
+          ended_at: readOptionalString(record.ended_at),
           status,
-          translatedStatus: {
-            fr: readTranslatedStatus(record.translations, 'fr'),
-            en: readTranslatedStatus(record.translations, 'en'),
+          translations: {
+            fr: readTranslation(record.translations, 'fr', record.description, status),
+            en: readTranslation(record.translations, 'en', record.description, status),
           },
           skillIds: [],
           targetIds: [],
@@ -185,7 +200,17 @@ export default function useAdminProjects() {
     return () => {
       isCurrent = false
     }
-  }, [])
+  }, [enabled, projectId])
 
-  return { projects, loading, error }
+  function replaceProject(updatedProject: AdminProject) {
+    setProjects((current) => current.map((project) => (
+      project.id === updatedProject.id ? updatedProject : project
+    )))
+  }
+
+  function removeProject(id: CatalogItem['id']) {
+    setProjects((current) => current.filter((project) => project.id !== id))
+  }
+
+  return { projects, loading, error, replaceProject, removeProject }
 }

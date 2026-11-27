@@ -84,6 +84,40 @@
   margin-top: 0.25rem;
 }
 
+.projects-table__notification {
+  position: fixed;
+  z-index: 50;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  width: min(30rem, calc(100vw - 2rem));
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #f0fdf4;
+  color: #166534;
+  box-shadow: 0 8px 24px rgb(24 24 27 / 12%);
+  font-size: 0.875rem;
+}
+
+.projects-table__notification--error {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.projects-table__notification button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1;
+}
+
 .projects-table__toolbar {
   display: flex;
   flex-wrap: wrap;

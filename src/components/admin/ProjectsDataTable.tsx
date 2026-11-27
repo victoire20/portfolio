@@ -1,14 +1,34 @@
-import { useState, type ReactNode } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState, type ReactNode } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import useAdminProjects from '../../hooks/useAdminProjects'
 import useSupabaseCatalog from '../../hooks/useSupabaseCatalog'
+import {
+  deleteProject as deleteProjectFromSupabase,
+  getNextProjectStatus,
+  updateProjectStatus,
+} from '../../hooks/createProject'
 import type { CatalogItem } from './ProjectCatalogPage'
-import type { ProjectEditSource } from './ProjectForm'
+import type { AdminProject, ProjectStatus } from '../../types/adminProject'
 
-type ProjectStatus = 'In progress' | 'Done'
 const projectStatuses: ProjectStatus[] = ['In progress', 'Done']
 const pageSizes = [5, 10, 20]
+
+type Notification = {
+  type: 'success' | 'error'
+  message: string
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+function getRouteNotification(value: unknown): Notification | null {
+  if (!isRecord(value) || !isRecord(value.projectNotification)) return null
+  const { type, message } = value.projectNotification
+  if ((type !== 'success' && type !== 'error') || typeof message !== 'string') return null
+  return { type, message }
+}
 
 function formatDate(value: string | null) {
   if (!value) return '—'
@@ -31,17 +51,36 @@ type ProjectsDataTableProps = {
 
 export default function ProjectsDataTable({ showThumbnails = false, headerAction }: ProjectsDataTableProps) {
   const navigate = useNavigate()
+  const location = useLocation()
   const { i18n } = useTranslation()
-  const { projects, loading, error } = useAdminProjects()
-  const skills = useSupabaseCatalog('skills')
+  const { projects, loading, error, replaceProject, removeProject: removeProjectFromState } = useAdminProjects()
   const targets = useSupabaseCatalog('targets')
   const projectTypes = useSupabaseCatalog('project_types')
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [openMenuId, setOpenMenuId] = useState<CatalogItem['id'] | null>(null)
+  const [pendingProjectId, setPendingProjectId] = useState<CatalogItem['id'] | null>(null)
+  const [notification, setNotification] = useState<Notification | null>(null)
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
+  const routeNotification = getRouteNotification(location.state)
+  const routeNotificationMessage = routeNotification?.message
+  const routeNotificationType = routeNotification?.type
+
+  useEffect(() => {
+    if (!notification) return
+    const timer = window.setTimeout(() => setNotification(null), 4500)
+    return () => window.clearTimeout(timer)
+  }, [notification])
+
+  useEffect(() => {
+    if (routeNotificationMessage === undefined || routeNotificationType === undefined) return
+    const timer = window.setTimeout(() => {
+      navigate(location.pathname, { replace: true, state: null })
+    }, 4500)
+    return () => window.clearTimeout(timer)
+  }, [location.pathname, navigate, routeNotificationMessage, routeNotificationType])
 
   const targetsById = new Map(targets.items.map((item) => [String(item.id), item]))
   const projectTypesById = new Map(projectTypes.items.map((item) => [String(item.id), item]))
@@ -52,7 +91,6 @@ export default function ProjectsDataTable({ showThumbnails = false, headerAction
       .map((item) => getCatalogLabel(item, i18n.language))
   )))]
   const catalogErrors = [
-    skills.error && `Skills: ${skills.error}`,
     targets.error && `Targets: ${targets.error}`,
     projectTypes.error && `Project types: ${projectTypes.error}`,
   ].filter(Boolean)
@@ -86,24 +124,58 @@ export default function ProjectsDataTable({ showThumbnails = false, headerAction
     firstProjectIndex - (filteredProjects.length ? 1 : 0),
     currentPage * pageSize,
   )
+  const activeNotification = notification ?? routeNotification
 
-  function openEditForm(project: typeof projectsWithLabels[number]) {
-    const source: ProjectEditSource = {
-      id: project.id,
-      name: project.title,
-      ...(project.cover ? { thumbnail: project.cover } : {}),
-      type: project.projectTypes[0] ?? '',
-      target: project.targets[0] ?? '',
-      status: project.status,
-      started: project.startedAt ?? '',
-      ended: project.endedAt ?? '',
-    }
+  function openEditForm(project: AdminProject) {
     setOpenMenuId(null)
-    navigate(`/admin/projects/${project.id}/edit`, { state: source })
+    navigate(`/admin/projects/${project.id}/edit`, { state: project })
+  }
+
+  async function toggleStatus(project: AdminProject) {
+    const nextStatus = getNextProjectStatus(project.status)
+    setPendingProjectId(project.id)
+    setOpenMenuId(null)
+    try {
+      await updateProjectStatus(project, nextStatus)
+      replaceProject({
+        ...project,
+        status: nextStatus,
+        translations: {
+          fr: { ...project.translations.fr, status: nextStatus === 'Done' ? 'Terminé' : 'En cours' },
+          en: { ...project.translations.en, status: nextStatus },
+        },
+      })
+      setNotification({ type: 'success', message: `Project marked as ${nextStatus.toLowerCase()}.` })
+    } catch (actionError) {
+      setNotification({
+        type: 'error',
+        message: actionError instanceof Error ? actionError.message : 'Could not update project status.',
+      })
+    } finally {
+      setPendingProjectId(null)
+    }
+  }
+
+  async function deleteProjectRow(project: AdminProject) {
+    if (!window.confirm(`Delete "${project.title}"? This cannot be undone.`)) return
+    setPendingProjectId(project.id)
+    setOpenMenuId(null)
+    try {
+      await deleteProjectFromSupabase(project)
+      removeProjectFromState(project.id)
+      setNotification({ type: 'success', message: 'Project deleted successfully.' })
+    } catch (actionError) {
+      setNotification({
+        type: 'error',
+        message: actionError instanceof Error ? actionError.message : 'Could not delete the project.',
+      })
+    } finally {
+      setPendingProjectId(null)
+    }
   }
 
   return (
-    <section className="projects-table" aria-labelledby="projects-table-title" aria-busy={loading}>
+    <section className="projects-table" aria-labelledby="projects-table-title" aria-busy={loading || pendingProjectId !== null}>
       <header className="projects-table__heading">
         <div>
           <h2 id="projects-table-title">Projects</h2>
@@ -116,6 +188,19 @@ export default function ProjectsDataTable({ showThumbnails = false, headerAction
           </span>
         </div>
       </header>
+
+      {activeNotification && (
+        <div
+          className={`projects-table__notification projects-table__notification--${activeNotification.type}`}
+          role={activeNotification.type === 'error' ? 'alert' : 'status'}
+        >
+          <span>{activeNotification.message}</span>
+          <button type="button" aria-label="Dismiss notification" onClick={() => {
+            if (routeNotification) navigate(location.pathname, { replace: true, state: null })
+            setNotification(null)
+          }}>×</button>
+        </div>
+      )}
 
       {(error || catalogErrors.length > 0) && (
         <div className="projects-table__load-error" role="alert">
@@ -181,7 +266,7 @@ export default function ProjectsDataTable({ showThumbnails = false, headerAction
           <tbody>
             {visibleProjects.map((project) => {
               const locale = i18n.language.toLowerCase().startsWith('fr') ? 'fr' : 'en'
-              const statusLabel = project.translatedStatus[locale] ?? project.status
+              const statusLabel = project.translations[locale].status || project.status
               return (
                 <tr key={project.id}>
                   <td className="projects-table__project-name">
@@ -215,8 +300,8 @@ export default function ProjectsDataTable({ showThumbnails = false, headerAction
                       {statusLabel}
                     </span>
                   </td>
-                  <td>{formatDate(project.startedAt)}</td>
-                  <td>{formatDate(project.endedAt)}</td>
+                  <td>{formatDate(project.started_at)}</td>
+                  <td>{formatDate(project.ended_at)}</td>
                   <td className="projects-table__actions-cell">
                     <div className="projects-table__actions">
                       <button
@@ -225,6 +310,7 @@ export default function ProjectsDataTable({ showThumbnails = false, headerAction
                         aria-label={`Actions for ${project.title}`}
                         aria-haspopup="menu"
                         aria-expanded={openMenuId === project.id}
+                        disabled={pendingProjectId !== null}
                         onClick={() => setOpenMenuId(openMenuId === project.id ? null : project.id)}
                       >
                         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -235,8 +321,20 @@ export default function ProjectsDataTable({ showThumbnails = false, headerAction
                       </button>
                       {openMenuId === project.id && (
                         <div className="projects-table__menu" role="menu">
-                          <button type="button" role="menuitem" onClick={() => openEditForm(project)}>
+                          <button type="button" role="menuitem" disabled={pendingProjectId !== null} onClick={() => toggleStatus(project)}>
+                            Mark as {project.status === 'Done' ? 'in progress' : 'done'}
+                          </button>
+                          <button type="button" role="menuitem" disabled={pendingProjectId !== null} onClick={() => openEditForm(project)}>
                             Edit
+                          </button>
+                          <button
+                            type="button"
+                            className="projects-table__menu-delete"
+                            role="menuitem"
+                            disabled={pendingProjectId !== null}
+                            onClick={() => deleteProjectRow(project)}
+                          >
+                            Delete
                           </button>
                         </div>
                       )}

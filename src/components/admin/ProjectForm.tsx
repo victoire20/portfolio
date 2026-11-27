@@ -1,11 +1,10 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import useSupabaseCatalog from '../../hooks/useSupabaseCatalog'
-import createProject from '../../hooks/createProject'
+import createProject, { updateProject } from '../../hooks/createProject'
 import type { CatalogItem } from './ProjectCatalogPage'
+import type { AdminProject, ProjectStatus } from '../../types/adminProject'
 import './ProjectForm.css'
-
-type ProjectStatus = 'In progress' | 'Done'
 
 type ProjectDraft = {
   title: string
@@ -31,20 +30,11 @@ type Notification = {
   message: string
 }
 
-export type ProjectEditSource = {
-  id: number | string
-  name: string
-  thumbnail?: string
-  type: string
-  target: string
-  status: ProjectStatus
-  started: string
-  ended: string
-}
-
 type ProjectFormProps = {
   mode: 'create' | 'edit'
-  initialProject?: ProjectEditSource
+  initialProject?: AdminProject
+  projectLoading?: boolean
+  projectLoadError?: string | null
 }
 
 type CloudinaryWidgetResult = {
@@ -86,28 +76,34 @@ function getCloudinaryError(error: unknown, result?: CloudinaryWidgetResult) {
   return `${detail || 'Unknown Cloudinary upload error.'} Check that the cloud name is correct and the upload preset is unsigned and allows this image type and size.`
 }
 
-function createDraft(project?: ProjectEditSource): ProjectDraft {
+function createDraft(project?: AdminProject): ProjectDraft {
   return {
-    title: project?.name ?? '',
-    descriptionFr: '',
-    descriptionEn: '',
-    cover: project?.thumbnail ?? '',
-    isPrivate: false,
-    liveUrl: '',
-    githubUrl: '',
-    maquetteSupport: '',
-    maquetteUrl: '',
-    isSmallProject: false,
-    startedAt: project?.started ?? '',
-    endedAt: project?.ended ?? '',
+    title: project?.title ?? '',
+    descriptionFr: project?.translations.fr.description ?? '',
+    descriptionEn: project?.translations.en.description ?? project?.description ?? '',
+    cover: project?.cover ?? '',
+    isPrivate: project?.isPrivate ?? false,
+    liveUrl: project?.liveUrl ?? '',
+    githubUrl: project?.githubUrl ?? '',
+    maquetteSupport: project?.maquette.support ?? '',
+    maquetteUrl: project?.maquette.url ?? '',
+    isSmallProject: project?.isSmallProject ?? false,
+    startedAt: project?.started_at ?? '',
+    endedAt: project?.ended_at ?? '',
     status: project?.status ?? 'In progress',
-    skillIds: [],
-    targetIds: [],
-    projectTypeIds: [],
+    skillIds: project?.skillIds ?? [],
+    targetIds: project?.targetIds ?? [],
+    projectTypeIds: project?.projectTypeIds ?? [],
   }
 }
 
-export default function ProjectForm({ mode, initialProject }: ProjectFormProps) {
+export default function ProjectForm({
+  mode,
+  initialProject,
+  projectLoading = false,
+  projectLoadError = null,
+}: ProjectFormProps) {
+  const navigate = useNavigate()
   const [draft, setDraft] = useState(() => createDraft(initialProject))
   const skills = useSupabaseCatalog('skills')
   const targets = useSupabaseCatalog('targets')
@@ -187,9 +183,13 @@ export default function ProjectForm({ mode, initialProject }: ProjectFormProps) 
     }))
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (mode !== 'create' || submitting) return
+    if (submitting) return
+    if (mode === 'edit' && !initialProject) {
+      setNotification({ type: 'error', message: 'The project to update could not be loaded.' })
+      return
+    }
 
     if (
       !draft.title.trim()
@@ -216,18 +216,32 @@ export default function ProjectForm({ mode, initialProject }: ProjectFormProps) 
 
     setSubmitting(true)
     setNotification(null)
-    createProject(draft)
-      .then(() => {
+    try {
+      if (mode === 'create') {
+        await createProject(draft)
         setDraft(createDraft())
         setNotification({ type: 'success', message: 'Project added successfully.' })
-      })
-      .catch((error: unknown) => {
-        setNotification({
-          type: 'error',
-          message: error instanceof Error ? error.message : 'Could not add the project.',
+      } else if (initialProject) {
+        await updateProject(initialProject, draft)
+        navigate('/admin/projects', {
+          state: {
+            projectNotification: {
+              type: 'success',
+              message: 'Project updated successfully.',
+            },
+          },
         })
+      }
+    } catch (error: unknown) {
+      setNotification({
+        type: 'error',
+        message: error instanceof Error
+          ? error.message
+          : `Could not ${mode === 'create' ? 'add' : 'update'} the project.`,
       })
-      .finally(() => setSubmitting(false))
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const optionErrors = [
@@ -246,9 +260,11 @@ export default function ProjectForm({ mode, initialProject }: ProjectFormProps) 
       </header>
 
       {mode === 'edit' && !initialProject && (
-        <p className="project-form__notice" role="status">
-          Open this form from a project row to load its current details. No project data was changed.
-        </p>
+        projectLoadError
+          ? <p className="project-form__error" role="alert">Could not load project: {projectLoadError}</p>
+          : <p className="project-form__notice" role="status">
+            {projectLoading ? 'Loading project details…' : 'Project details are unavailable. No data has been changed.'}
+          </p>
       )}
       {optionErrors.length > 0 && (
         <div className="project-form__error" role="alert">
@@ -373,17 +389,12 @@ export default function ProjectForm({ mode, initialProject }: ProjectFormProps) 
           </div>
         </section>
 
-        {mode === 'edit' && (
-          <p className="project-form__notice" role="status">
-            Project updates are not enabled yet; no changes will be written.
-          </p>
-        )}
         <footer className="project-form__footer">
           <Link className="project-form__button project-form__button--outline" to="/admin/projects" onClick={(event) => {
             if (submitting) event.preventDefault()
           }}>Cancel</Link>
-          <button className="project-form__button project-form__button--primary" type="submit" disabled={mode !== 'create' || submitting}>
-            {mode === 'create' ? submitting ? 'Adding…' : 'Add project' : 'Save changes'}
+            <button className="project-form__button project-form__button--primary" type="submit" disabled={(mode === 'edit' && !initialProject) || submitting}>
+              {mode === 'create' ? submitting ? 'Adding…' : 'Add project' : submitting ? 'Saving…' : 'Save changes'}
           </button>
         </footer>
       </form>
