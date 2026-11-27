@@ -5,11 +5,13 @@ import ImgAbout from '../assets/profile.png'
 import AboutSection from '../components/sections/AboutSection'
 import PageHeaderSection from '../components/sections/PageHeaderSection'
 import useActiveSkills from '../hooks/useActiveSkills'
+import useFunFacts from '../hooks/useFunFacts'
 import { skillCategoryFallbacks, skillCategoryTranslationKeys } from '../types/skill'
 
 export default function About() {
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation()
     const { groups, loading, error } = useActiveSkills()
+    const { facts, loading: funFactsLoading, error: funFactsError } = useFunFacts(i18n.language)
     const aboutSkillTypes = ['languages', 'other', 'tools', 'databases', 'frameworks']
     const aboutSkillGroups = aboutSkillTypes.flatMap((type) =>
         groups.filter((group) => group.type === type && group.items.length > 0),
@@ -67,11 +69,12 @@ export default function About() {
                     </div>
                 </div>
                 <div className="section__body section__fact">
-                    <div className="line__div fun__fact max-w-[605px]">
-                        <div className="fact__item">{t('about.fun_facts_p2')}</div>
-                        <div className="fact__item">{t('about.fun_facts_p3')}</div>
-                        <div className="fact__item">{t('about.fun_facts_p4')}</div>
-                        <div className="fact__item">{t('about.fun_facts_p5')}</div>
+                    <div className="line__div fun__fact max-w-[605px]" aria-busy={funFactsLoading}>
+                        {funFactsError && <p role="alert">Could not load fun facts: {funFactsError}</p>}
+                        {funFactsLoading && <p role="status">Loading fun facts…</p>}
+                        {!funFactsLoading && !funFactsError && facts.map((fact) => (
+                            <div className="fact__item" key={fact.id}>{fact.content}</div>
+                        ))}
                     </div>
                     <div className="section__image hide__image">
                         <img src={FunFactImg} alt="section image" />

@@ -93,7 +93,6 @@ src/
 |       |-- HeadSocial.tsx / HeadSocial.css
 |       `-- LanguageDropdown.tsx / LanguageDropdown.css
 |-- data/
-|   |-- funfacts.ts
 |   |-- projects.ts
 |-- hooks/
 |   |-- useGallery.ts

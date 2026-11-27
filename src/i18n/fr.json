@@ -44,11 +44,7 @@
     "first_paragraph": "Je suis Jean de DIEU Yaba, un développeur full-stack passionné avec plus de 3 ans d'expérience dans la création d'applications web robustes. Mon parcours a débuté dans le développement back-end, où j'ai perfectionné mes compétences dans la construction de solutions côté serveur évolutives et efficaces. Au fil du temps, j'ai élargi mon expertise pour englober le développement full-stack, ce qui me permet de créer des solutions web complètes, à la fois conviviales et techniquement solides.",
     "second_paragraph": "Mon approche du développement est centrée sur l'écriture d'un code propre et maintenable, en respectant les meilleures pratiques. Je maîtrise une variété de langages de programmation et de frameworks, ce qui me permet de choisir les bons outils pour chaque projet. Je m'engage à apprendre continuellement et à rester à jour avec les dernières tendances de l'industrie afin de garantir que mes solutions soient modernes et efficaces.",
     "third_paragraph": "La collaboration et la communication sont des aspects clés de mon éthique de travail. J'apprécie de travailler en étroite collaboration avec les clients et les membres de l'équipe pour comprendre leurs besoins et fournir des solutions qui dépassent les attentes. Qu'il s'agisse de développer une nouvelle fonctionnalité, d'optimiser les performances ou d'assurer la sécurité, je suis dédié à fournir des résultats de haute qualité qui favorisent le succès.",
-    "fun_facts_title": "mes-anecdotes-amusantes",
-    "fun_facts_p2": "Je fais du développement full-stack 💻, mais je préfère le travail en back-end ⚙️",
-    "fun_facts_p3": "L'IA me fascine 🤖, même si parfois le côté humain me manque 🤝",
-    "fun_facts_p4": "J'aime les chiens 🐶, même si je n'en ai pas encore 🦴",
-    "fun_facts_p5": "Je chéris les moments passés avec ma famille et mes amis ❤️✨"
+    "fun_facts_title": "mes-anecdotes-amusantes"
   },
   "projects": {
     "title": "projets",

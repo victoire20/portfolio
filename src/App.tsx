@@ -39,6 +39,7 @@ export default function App() {
           <Route index element={<AdminIndex />} />
           <Route path="projects" element={<AdminProjects />} />
           <Route path="projects/new" element={<NewProject />} />
+          <Route path="projects/:projectId/edit" element={<NewProject />} />
           <Route path="project-types" element={<ProjectTypes />} />
           <Route path="targets" element={<Targets />} />
           <Route path="skills" element={<Skills />} />

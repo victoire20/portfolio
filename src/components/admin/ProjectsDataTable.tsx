@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 type ProjectType = 'CLI' | 'Web' | 'Mobile' | 'Desktop' | 'Cloud' | 'Framework'
 type ProjectStatus = 'In progress' | 'Done'
@@ -56,12 +57,12 @@ type ProjectsDataTableProps = {
 }
 
 export default function ProjectsDataTable({ showThumbnails = false, headerAction }: ProjectsDataTableProps) {
+  const navigate = useNavigate()
   const [projects, setProjects] = useState(initialProjects)
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [openMenuId, setOpenMenuId] = useState<number | null>(null)
-  const [draft, setDraft] = useState<Project | null>(null)
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
 
@@ -83,13 +84,6 @@ export default function ProjectsDataTable({ showThumbnails = false, headerAction
       ? { ...item, status, ended: status === 'Done' ? item.ended || new Date().toISOString().slice(0, 10) : '' }
       : item))
     setOpenMenuId(null)
-  }
-
-  function saveProject(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    if (!draft) return
-    setProjects((current) => current.map((project) => project.id === draft.id ? draft : project))
-    setDraft(null)
   }
 
   return (
@@ -219,8 +213,8 @@ export default function ProjectsDataTable({ showThumbnails = false, headerAction
                           Mark as {project.status === 'Done' ? 'in progress' : 'done'}
                         </button>
                         <button type="button" role="menuitem" onClick={() => {
-                          setDraft(project)
                           setOpenMenuId(null)
+                          navigate(`/admin/projects/${project.id}/edit`, { state: project })
                         }}>
                           Edit
                         </button>
@@ -279,85 +273,6 @@ export default function ProjectsDataTable({ showThumbnails = false, headerAction
         </div>
       </footer>
 
-      {draft && (
-        <div className="projects-table__overlay" onMouseDown={(event) => {
-          if (event.target === event.currentTarget) setDraft(null)
-        }}>
-          <section className="projects-table__dialog" role="dialog" aria-modal="true" aria-labelledby="edit-project-title">
-            <header>
-              <h2 id="edit-project-title">Edit project</h2>
-              <p>Update the project details below.</p>
-            </header>
-            <form onSubmit={saveProject}>
-              <label>
-                Project name
-                <input
-                  required
-                  value={draft.name}
-                  onChange={(event) => setDraft({ ...draft, name: event.target.value })}
-                />
-              </label>
-              <div className="projects-table__form-row">
-                <label>
-                  Type
-                  <select
-                    value={draft.type}
-                    onChange={(event) => setDraft({ ...draft, type: event.target.value as ProjectType })}
-                  >
-                    {projectTypes.map((type) => <option key={type} value={type}>{type}</option>)}
-                  </select>
-                </label>
-                <label>
-                  Target
-                  <input
-                    required
-                    value={draft.target}
-                    onChange={(event) => setDraft({ ...draft, target: event.target.value })}
-                  />
-                </label>
-              </div>
-              <div className="projects-table__form-row">
-                <label>
-                  Status
-                  <select
-                    value={draft.status}
-                    onChange={(event) => setDraft({ ...draft, status: event.target.value as ProjectStatus })}
-                  >
-                    {projectStatuses.map((status) => <option key={status} value={status}>{status}</option>)}
-                  </select>
-                </label>
-                <label>
-                  Started
-                  <input
-                    required
-                    type="date"
-                    value={draft.started}
-                    onChange={(event) => setDraft({ ...draft, started: event.target.value })}
-                  />
-                </label>
-              </div>
-              <label>
-                Ended
-                <input
-                  type="date"
-                  min={draft.started}
-                  required={draft.status === 'Done'}
-                  value={draft.ended}
-                  onChange={(event) => setDraft({ ...draft, ended: event.target.value })}
-                />
-              </label>
-              <footer>
-                <button className="projects-table__button projects-table__button--outline" type="button" onClick={() => setDraft(null)}>
-                  Cancel
-                </button>
-                <button className="projects-table__button projects-table__button--primary" type="submit">
-                  Save changes
-                </button>
-              </footer>
-            </form>
-          </section>
-        </div>
-      )}
     </section>
   )
 }
