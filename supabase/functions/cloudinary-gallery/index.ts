@@ -2,10 +2,14 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, apikey, content-type, x-client-info',
+  'Access-Control-Allow-Headers': 'authorization, apikey, content-type, x-client-info, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Max-Age': '86400',
   'Content-Type': 'application/json',
 }
+
+const galleryAssetFolder = 'assets/images'
+const galleryPublicIdPrefix = 'assets/images/'
 
 type CloudinaryAsset = {
   public_id: string
@@ -149,12 +153,23 @@ async function handleList(
     return jsonResponse({ error: 'Invalid Cloudinary pagination cursor.' }, 400)
   }
 
-  const url = new URL(`https://api.cloudinary.com/v1_1/${cloudName}/resources/image/upload`)
-  url.searchParams.set('max_results', '100')
-  url.searchParams.set('fields', 'public_id,asset_id,secure_url,bytes,width,height,format,created_at')
-  if (typeof cursor === 'string' && cursor) url.searchParams.set('next_cursor', cursor)
+  const folderUrl = new URL(`https://api.cloudinary.com/v1_1/${cloudName}/resources/by_asset_folder`)
+  folderUrl.searchParams.set('asset_folder', galleryAssetFolder)
+  folderUrl.searchParams.set('max_results', '100')
+  folderUrl.searchParams.set('fields', 'public_id,asset_id,secure_url,bytes,width,height,format,created_at,asset_folder,resource_type,type')
+  if (typeof cursor === 'string' && cursor) folderUrl.searchParams.set('next_cursor', cursor)
 
-  const response = await fetch(url, { headers: { Authorization: authorization } })
+  let response = await fetch(folderUrl, { headers: { Authorization: authorization } })
+  let usingFixedFolderModeFallback = false
+  if (response.status === 404) {
+    usingFixedFolderModeFallback = true
+    const prefixUrl = new URL(`https://api.cloudinary.com/v1_1/${cloudName}/resources/image/upload`)
+    prefixUrl.searchParams.set('prefix', galleryPublicIdPrefix)
+    prefixUrl.searchParams.set('max_results', '100')
+    prefixUrl.searchParams.set('fields', 'public_id,asset_id,secure_url,bytes,width,height,format,created_at,resource_type,type')
+    if (typeof cursor === 'string' && cursor) prefixUrl.searchParams.set('next_cursor', cursor)
+    response = await fetch(prefixUrl, { headers: { Authorization: authorization } })
+  }
   if (!response.ok) {
     return jsonResponse({ error: `Could not list Cloudinary images: ${await cloudinaryErrorMessage(response)}` }, 502)
   }
@@ -165,7 +180,19 @@ async function handleList(
   }
 
   const projects = await loadProjectRecords(supabase)
-  const resources = result.resources.map((resource): CloudinaryAsset => {
+  const matchingResources = result.resources.filter((resource) => (
+    isRecord(resource)
+    && resource.resource_type === 'image'
+    && resource.type === 'upload'
+    && (
+      usingFixedFolderModeFallback
+      || (
+        typeof resource.asset_folder === 'string'
+        && resource.asset_folder.toLowerCase() === galleryAssetFolder
+      )
+    )
+  ))
+  const resources = matchingResources.map((resource): CloudinaryAsset => {
     if (
       !isRecord(resource)
       || typeof resource.public_id !== 'string'
@@ -214,6 +241,45 @@ async function handleDelete(
   }
 
   const publicIds = [...new Set(publicIdsValue as string[])]
+  const resourceUrl = new URL(`https://api.cloudinary.com/v1_1/${cloudName}/resources/image/upload`)
+  resourceUrl.searchParams.set('fields', 'public_id,asset_folder,resource_type,type')
+  for (const publicId of publicIds) resourceUrl.searchParams.append('public_ids[]', publicId)
+
+  const resourceResponse = await fetch(resourceUrl, { headers: { Authorization: authorization } })
+  if (!resourceResponse.ok) {
+    return jsonResponse({
+      error: `Could not verify the selected Cloudinary images: ${await cloudinaryErrorMessage(resourceResponse)}`,
+    }, 502)
+  }
+  const resourceResult: unknown = await resourceResponse.json()
+  const resources = isRecord(resourceResult) && Array.isArray(resourceResult.resources)
+    ? resourceResult.resources
+    : []
+  const validPublicIds = new Set<string>()
+  for (const resource of resources) {
+    if (
+      !isRecord(resource)
+      || typeof resource.public_id !== 'string'
+      || resource.resource_type !== 'image'
+      || resource.type !== 'upload'
+    ) {
+      continue
+    }
+
+    const inGalleryFolder = (
+      typeof resource.asset_folder === 'string'
+      && resource.asset_folder.toLowerCase() === galleryAssetFolder
+    ) || resource.public_id.startsWith(galleryPublicIdPrefix)
+    if (inGalleryFolder) validPublicIds.add(resource.public_id)
+  }
+  const invalidPublicIds = publicIds.filter((publicId) => !validPublicIds.has(publicId))
+  if (invalidPublicIds.length > 0) {
+    return jsonResponse({
+      error: 'Only uploaded images in the assets/images folder can be deleted from this gallery.',
+      invalid: invalidPublicIds,
+    }, 400)
+  }
+
   const projects = await loadProjectRecords(supabase)
   const usagesByPublicId = new Map<string, AssetUsage[]>()
   for (const project of projects) {

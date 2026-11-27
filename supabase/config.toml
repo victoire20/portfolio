@@ -1,0 +1,2 @@
+[functions.cloudinary-gallery]
+verify_jwt = false
