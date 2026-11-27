@@ -7,7 +7,7 @@ type SidebarProps = {
   onToggle: () => void
 }
 
-type IconName = 'grid' | 'folder' | 'chart' | 'settings' | 'chevron' | 'briefcase' | 'tags' | 'target' | 'code' | 'sparkles' | 'logout'
+type IconName = 'grid' | 'folder' | 'chart' | 'settings' | 'chevron' | 'briefcase' | 'tags' | 'target' | 'code' | 'sparkles' | 'image' | 'logout'
 
 function Icon({ name }: { name: IconName }) {
   const paths: Record<IconName, ReactNode> = {
@@ -19,6 +19,7 @@ function Icon({ name }: { name: IconName }) {
     target: <><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1" /></>,
     code: <><path d="m8 17-5-5 5-5M16 7l5 5-5 5M14 4l-4 16" /></>,
     sparkles: <><path d="m12 3 1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2L12 3Z" /><path d="m19 14 .9 2.1L22 17l-2.1.9L19 20l-.9-2.1L16 17l2.1-.9L19 14Z" /></>,
+    image: <><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="m21 15-5-5L5 21" /></>,
     logout: <><path d="M10 17l5-5-5-5" /><path d="M15 12H3" /><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6" /></>,
     chevron: <path d="m9 18 6-6-6-6" />,
     briefcase: <><rect x="3" y="7" width="18" height="14" rx="2" /><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v2h4v-2" /></>,
@@ -43,6 +44,7 @@ function Icon({ name }: { name: IconName }) {
 const navigation = [
   { label: 'Overview', icon: 'grid' as const, path: '/admin' },
   { label: 'Projects', icon: 'folder' as const, path: '/admin/projects' },
+  { label: 'Gallery', icon: 'image' as const, path: '/admin/gallery' },
   { label: 'Project types', icon: 'tags' as const, path: '/admin/project-types' },
   { label: 'Targets', icon: 'target' as const, path: '/admin/targets' },
   { label: 'Skills', icon: 'code' as const, path: '/admin/skills' },
