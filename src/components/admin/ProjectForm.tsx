@@ -32,7 +32,7 @@ type Notification = {
 }
 
 export type ProjectEditSource = {
-  id: number
+  id: number | string
   name: string
   thumbnail?: string
   type: string

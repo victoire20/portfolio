@@ -1,54 +1,27 @@
 import { useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import useAdminProjects from '../../hooks/useAdminProjects'
+import useSupabaseCatalog from '../../hooks/useSupabaseCatalog'
+import type { CatalogItem } from './ProjectCatalogPage'
+import type { ProjectEditSource } from './ProjectForm'
 
-type ProjectType = 'CLI' | 'Web' | 'Mobile' | 'Desktop' | 'Cloud' | 'Framework'
 type ProjectStatus = 'In progress' | 'Done'
-
-type Project = {
-  id: number
-  name: string
-  thumbnail?: string
-  type: ProjectType
-  target: string
-  status: ProjectStatus
-  started: string
-  ended: string
-}
-
-const projectTypes: ProjectType[] = ['CLI', 'Web', 'Mobile', 'Desktop', 'Cloud', 'Framework']
 const projectStatuses: ProjectStatus[] = ['In progress', 'Done']
 const pageSizes = [5, 10, 20]
 
-const initialProjects: Project[] = [
-  { id: 1, name: 'Portfolio Website', thumbnail: '/images/projects/portfolio.jpg', type: 'Web', target: 'PC', status: 'Done', started: '2024-01-08', ended: '2024-03-22' },
-  { id: 2, name: 'Task Runner', type: 'CLI', target: 'Dev tool', status: 'In progress', started: '2025-02-14', ended: '' },
-  { id: 3, name: 'Pocket Budget', type: 'Mobile', target: 'Smartphone', status: 'Done', started: '2024-06-03', ended: '2024-09-10' },
-  { id: 4, name: 'Cloud Deploy API', type: 'Cloud', target: 'Server', status: 'In progress', started: '2025-04-21', ended: '' },
-  { id: 5, name: 'Component Toolkit', type: 'Framework', target: 'Dev tool', status: 'Done', started: '2023-11-06', ended: '2024-02-16' },
-  { id: 6, name: 'Inventory Manager', type: 'Desktop', target: 'PC', status: 'In progress', started: '2025-05-12', ended: '' },
-  { id: 7, name: 'Recipe Manager', type: 'Web', target: 'PC', status: 'Done', started: '2023-09-18', ended: '2023-12-05' },
-  { id: 8, name: 'Terminal Dashboard', type: 'CLI', target: 'Dev tool', status: 'In progress', started: '2025-01-09', ended: '' },
-  { id: 9, name: 'Shared Notes', type: 'Mobile', target: 'Smartphone', status: 'In progress', started: '2025-03-03', ended: '' },
-  { id: 10, name: 'Asset Storage', type: 'Cloud', target: 'Server', status: 'Done', started: '2024-02-12', ended: '2024-07-26' },
-  { id: 11, name: 'Design System', type: 'Framework', target: 'Dev tool', status: 'In progress', started: '2025-04-07', ended: '' },
-  { id: 12, name: 'Desktop Music Player', type: 'Desktop', target: 'PC', status: 'Done', started: '2023-05-15', ended: '2023-10-30' },
-  { id: 13, name: 'Weather Forecast', type: 'Web', target: 'Smartphone', status: 'Done', started: '2024-04-01', ended: '2024-05-24' },
-  { id: 14, name: 'Log Monitor', type: 'CLI', target: 'Server', status: 'Done', started: '2024-08-05', ended: '2024-11-14' },
-  { id: 15, name: 'Learning Tracker', type: 'Mobile', target: 'Smartphone', status: 'In progress', started: '2025-02-10', ended: '' },
-  { id: 16, name: 'Backup Scheduler', type: 'Desktop', target: 'PC', status: 'In progress', started: '2025-05-19', ended: '' },
-  { id: 17, name: 'Image CDN', type: 'Cloud', target: 'Server', status: 'In progress', started: '2025-06-02', ended: '' },
-  { id: 18, name: 'Form Builder', type: 'Framework', target: 'Dev tool', status: 'Done', started: '2023-07-10', ended: '2023-12-18' },
-  { id: 19, name: 'Event Planner', type: 'Web', target: 'PC', status: 'In progress', started: '2025-03-24', ended: '' },
-  { id: 20, name: 'Device Sync', type: 'Mobile', target: 'Smartphone', status: 'Done', started: '2024-10-07', ended: '2025-01-16' },
-]
-
-function formatDate(value: string) {
+function formatDate(value: string | null) {
   if (!value) return '—'
   return new Intl.DateTimeFormat('en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
   }).format(new Date(`${value}T00:00:00`))
+}
+
+function getCatalogLabel(item: CatalogItem, language: string) {
+  const locale = language.toLowerCase().startsWith('fr') ? 'fr' : 'en'
+  return item.translations?.[locale].label.trim() || item.label
 }
 
 type ProjectsDataTableProps = {
@@ -58,17 +31,50 @@ type ProjectsDataTableProps = {
 
 export default function ProjectsDataTable({ showThumbnails = false, headerAction }: ProjectsDataTableProps) {
   const navigate = useNavigate()
-  const [projects, setProjects] = useState(initialProjects)
+  const { i18n } = useTranslation()
+  const { projects, loading, error } = useAdminProjects()
+  const skills = useSupabaseCatalog('skills')
+  const targets = useSupabaseCatalog('targets')
+  const projectTypes = useSupabaseCatalog('project_types')
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
-  const [openMenuId, setOpenMenuId] = useState<number | null>(null)
+  const [openMenuId, setOpenMenuId] = useState<CatalogItem['id'] | null>(null)
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
 
-  const filteredProjects = projects.filter((project) => {
-    const matchesSearch = project.name.toLowerCase().includes(search.trim().toLowerCase())
-    const matchesType = !typeFilter || project.type === typeFilter
+  const targetsById = new Map(targets.items.map((item) => [String(item.id), item]))
+  const projectTypesById = new Map(projectTypes.items.map((item) => [String(item.id), item]))
+  const projectTypeLabels = [...new Set(projects.flatMap((project) => (
+    project.projectTypeIds
+      .map((id) => projectTypesById.get(String(id)))
+      .filter((item): item is CatalogItem => Boolean(item))
+      .map((item) => getCatalogLabel(item, i18n.language))
+  )))]
+  const catalogErrors = [
+    skills.error && `Skills: ${skills.error}`,
+    targets.error && `Targets: ${targets.error}`,
+    projectTypes.error && `Project types: ${projectTypes.error}`,
+  ].filter(Boolean)
+
+  const projectsWithLabels = projects.map((project) => ({
+    ...project,
+    targets: project.targetIds
+      .map((id) => targetsById.get(String(id)))
+      .filter((item): item is CatalogItem => Boolean(item))
+      .map((item) => getCatalogLabel(item, i18n.language)),
+    projectTypes: project.projectTypeIds
+      .map((id) => projectTypesById.get(String(id)))
+      .filter((item): item is CatalogItem => Boolean(item))
+      .map((item) => getCatalogLabel(item, i18n.language)),
+  }))
+
+  const filteredProjects = projectsWithLabels.filter((project) => {
+    const query = search.trim().toLowerCase()
+    const matchesSearch = project.title.toLowerCase().includes(query)
+      || project.targets.some((target) => target.toLowerCase().includes(query))
+      || project.projectTypes.some((type) => type.toLowerCase().includes(query))
+    const matchesType = !typeFilter || project.projectTypes.includes(typeFilter)
     const matchesStatus = !statusFilter || project.status === statusFilter
     return matchesSearch && matchesType && matchesStatus
   })
@@ -76,18 +82,28 @@ export default function ProjectsDataTable({ showThumbnails = false, headerAction
   const currentPage = Math.min(page, pageCount)
   const firstProjectIndex = filteredProjects.length === 0 ? 0 : (currentPage - 1) * pageSize + 1
   const lastProjectIndex = Math.min(currentPage * pageSize, filteredProjects.length)
-  const visibleProjects = filteredProjects.slice(firstProjectIndex - (filteredProjects.length ? 1 : 0), currentPage * pageSize)
+  const visibleProjects = filteredProjects.slice(
+    firstProjectIndex - (filteredProjects.length ? 1 : 0),
+    currentPage * pageSize,
+  )
 
-  function toggleStatus(project: Project) {
-    const status: ProjectStatus = project.status === 'Done' ? 'In progress' : 'Done'
-    setProjects((current) => current.map((item) => item.id === project.id
-      ? { ...item, status, ended: status === 'Done' ? item.ended || new Date().toISOString().slice(0, 10) : '' }
-      : item))
+  function openEditForm(project: typeof projectsWithLabels[number]) {
+    const source: ProjectEditSource = {
+      id: project.id,
+      name: project.title,
+      ...(project.cover ? { thumbnail: project.cover } : {}),
+      type: project.projectTypes[0] ?? '',
+      target: project.targets[0] ?? '',
+      status: project.status,
+      started: project.startedAt ?? '',
+      ended: project.endedAt ?? '',
+    }
     setOpenMenuId(null)
+    navigate(`/admin/projects/${project.id}/edit`, { state: source })
   }
 
   return (
-    <section className="projects-table" aria-labelledby="projects-table-title">
+    <section className="projects-table" aria-labelledby="projects-table-title" aria-busy={loading}>
       <header className="projects-table__heading">
         <div>
           <h2 id="projects-table-title">Projects</h2>
@@ -100,6 +116,13 @@ export default function ProjectsDataTable({ showThumbnails = false, headerAction
           </span>
         </div>
       </header>
+
+      {(error || catalogErrors.length > 0) && (
+        <div className="projects-table__load-error" role="alert">
+          {error && <p>Could not load projects: {error}</p>}
+          {catalogErrors.map((message) => <p key={message}>{message}</p>)}
+        </div>
+      )}
 
       <div className="projects-table__toolbar">
         <label className="projects-table__search">
@@ -126,7 +149,7 @@ export default function ProjectsDataTable({ showThumbnails = false, headerAction
             setPage(1)
           }}>
             <option value="">All types</option>
-            {projectTypes.map((type) => <option key={type} value={type}>{type}</option>)}
+            {projectTypeLabels.map((type) => <option key={type} value={type}>{type}</option>)}
           </select>
         </label>
 
@@ -156,88 +179,83 @@ export default function ProjectsDataTable({ showThumbnails = false, headerAction
             </tr>
           </thead>
           <tbody>
-            {visibleProjects.map((project) => (
-              <tr key={project.id}>
-                <td className="projects-table__project-name">
-                  {showThumbnails ? (
-                    <span className="projects-table__project-cell">
-                      {project.thumbnail ? (
-                        <img
-                          className="projects-table__thumbnail"
-                          src={project.thumbnail}
-                          alt={`${project.name} thumbnail`}
-                          loading="lazy"
-                        />
-                      ) : (
-                        <span className="projects-table__thumbnail projects-table__thumbnail--placeholder" role="img" aria-label="No thumbnail available">
-                          <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <rect x="3" y="4" width="18" height="16" rx="2" />
-                            <circle cx="8.5" cy="9" r="1.5" />
-                            <path d="m21 15-5-5L5 20" />
-                          </svg>
-                        </span>
-                      )}
-                      <span>{project.name}</span>
+            {visibleProjects.map((project) => {
+              const locale = i18n.language.toLowerCase().startsWith('fr') ? 'fr' : 'en'
+              const statusLabel = project.translatedStatus[locale] ?? project.status
+              return (
+                <tr key={project.id}>
+                  <td className="projects-table__project-name">
+                    {showThumbnails ? (
+                      <span className="projects-table__project-cell">
+                        {project.cover ? (
+                          <img
+                            className="projects-table__thumbnail"
+                            src={project.cover}
+                            alt={`${project.title} thumbnail`}
+                            loading="lazy"
+                          />
+                        ) : (
+                          <span className="projects-table__thumbnail projects-table__thumbnail--placeholder" role="img" aria-label="No thumbnail available">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                              <rect x="3" y="4" width="18" height="16" rx="2" />
+                              <circle cx="8.5" cy="9" r="1.5" />
+                              <path d="m21 15-5-5L5 20" />
+                            </svg>
+                          </span>
+                        )}
+                        <span>{project.title}</span>
+                      </span>
+                    ) : project.title}
+                  </td>
+                  <td>{project.projectTypes.join(', ') || '—'}</td>
+                  <td>{project.targets.join(', ') || '—'}</td>
+                  <td>
+                    <span className={`projects-table__status projects-table__status--${project.status === 'Done' ? 'done' : 'progress'}`}>
+                      <span aria-hidden="true" />
+                      {statusLabel}
                     </span>
-                  ) : project.name}
-                </td>
-                <td>{project.type}</td>
-                <td>{project.target}</td>
-                <td>
-                  <span className={`projects-table__status projects-table__status--${project.status === 'Done' ? 'done' : 'progress'}`}>
-                    <span aria-hidden="true" />
-                    {project.status}
-                  </span>
-                </td>
-                <td>{formatDate(project.started)}</td>
-                <td>{formatDate(project.ended)}</td>
-                <td className="projects-table__actions-cell">
-                  <div className="projects-table__actions">
-                    <button
-                      type="button"
-                      className="projects-table__more"
-                      aria-label={`Actions for ${project.name}`}
-                      aria-haspopup="menu"
-                      aria-expanded={openMenuId === project.id}
-                      onClick={() => setOpenMenuId(openMenuId === project.id ? null : project.id)}
-                    >
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <circle cx="5" cy="12" r="1" />
-                        <circle cx="12" cy="12" r="1" />
-                        <circle cx="19" cy="12" r="1" />
-                      </svg>
-                    </button>
-                    {openMenuId === project.id && (
-                      <div className="projects-table__menu" role="menu">
-                        <button type="button" role="menuitem" onClick={() => toggleStatus(project)}>
-                          Mark as {project.status === 'Done' ? 'in progress' : 'done'}
-                        </button>
-                        <button type="button" role="menuitem" onClick={() => {
-                          setOpenMenuId(null)
-                          navigate(`/admin/projects/${project.id}/edit`, { state: project })
-                        }}>
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          className="projects-table__menu-delete"
-                          role="menuitem"
-                          onClick={() => {
-                            setProjects((current) => current.filter((item) => item.id !== project.id))
-                            setOpenMenuId(null)
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td>{formatDate(project.startedAt)}</td>
+                  <td>{formatDate(project.endedAt)}</td>
+                  <td className="projects-table__actions-cell">
+                    <div className="projects-table__actions">
+                      <button
+                        type="button"
+                        className="projects-table__more"
+                        aria-label={`Actions for ${project.title}`}
+                        aria-haspopup="menu"
+                        aria-expanded={openMenuId === project.id}
+                        onClick={() => setOpenMenuId(openMenuId === project.id ? null : project.id)}
+                      >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <circle cx="5" cy="12" r="1" />
+                          <circle cx="12" cy="12" r="1" />
+                          <circle cx="19" cy="12" r="1" />
+                        </svg>
+                      </button>
+                      {openMenuId === project.id && (
+                        <div className="projects-table__menu" role="menu">
+                          <button type="button" role="menuitem" onClick={() => openEditForm(project)}>
+                            Edit
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              )
+            })}
             {visibleProjects.length === 0 && (
               <tr>
-                <td className="projects-table__empty" colSpan={7}>No projects found.</td>
+                <td className="projects-table__empty" colSpan={7}>
+                  {loading
+                    ? 'Loading projects…'
+                    : error
+                      ? 'Projects could not be loaded.'
+                      : projects.length === 0
+                        ? 'No projects yet.'
+                        : 'No projects found.'}
+                </td>
               </tr>
             )}
           </tbody>
@@ -246,9 +264,11 @@ export default function ProjectsDataTable({ showThumbnails = false, headerAction
 
       <footer className="projects-table__pagination">
         <p>
-          {filteredProjects.length === 0
-            ? 'No projects to display'
-            : `Showing ${firstProjectIndex}–${lastProjectIndex} of ${filteredProjects.length} projects`}
+          {loading
+            ? 'Loading projects…'
+            : filteredProjects.length === 0
+              ? 'No projects to display'
+              : `Showing ${firstProjectIndex}–${lastProjectIndex} of ${filteredProjects.length} projects`}
         </p>
         <div className="projects-table__pagination-controls">
           <label>
@@ -272,7 +292,6 @@ export default function ProjectsDataTable({ showThumbnails = false, headerAction
           </button>
         </div>
       </footer>
-
     </section>
   )
 }

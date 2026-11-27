@@ -8,7 +8,7 @@ import { useLocation, useParams } from 'react-router-dom'
 function isProjectEditSource(value: unknown, projectId: string | undefined): value is ProjectEditSource {
   if (!value || typeof value !== 'object' || !projectId) return false
   const project = value as Partial<ProjectEditSource>
-  return typeof project.id === 'number'
+  return (typeof project.id === 'number' || typeof project.id === 'string')
     && String(project.id) === projectId
     && typeof project.name === 'string'
     && typeof project.type === 'string'
