@@ -5,22 +5,26 @@ import ProjectSection from "../components/sections/ProjectSection"
 import QuotationSection from "../components/sections/QuotationSection"
 import SkillSection from "../components/sections/SkillSection"
 import { useTranslation } from "react-i18next"
-import { projects } from "../data/projects"
 import ProjectCard from "../components/card/ProjectCard"
+import usePublicProjects from "../hooks/usePublicProjects"
 
 import Button from "../components/ui/button"
 
 import ImgAbout from '../assets/profile.png'
 
 export default function Home() {
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation()
+    const { projects, loading, error } = usePublicProjects(i18n.language)
+    const featuredProjects = projects.filter((project) => !project.isSmallProject).slice(0, 3)
 
     return <>
             <main className="container page-decor page-decor--home">
                 <HeroSection />
                 <QuotationSection />
                 <ProjectSection id="projects" className="row medium-square-right" title={t('home.projects_title')} hasBar={true} hasMoreBtn={true}>
-                    {projects.slice(0, 3).map((project) => !project.isSmallProject && <ProjectCard key={project.id} data={project} />)}
+                    {error && <p role="alert">Could not load projects: {error}</p>}
+                    {loading && <p role="status">Loading projects…</p>}
+                    {!loading && !error && featuredProjects.map((project) => <ProjectCard key={project.id} data={project} />)}
                 </ProjectSection>
                 <SkillSection />
                 <AboutSection hasBar={true}>

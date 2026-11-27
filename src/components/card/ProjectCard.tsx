@@ -2,14 +2,20 @@ import Button from "../ui/button"
 import type { Project } from "../../types/project"
 
 
-const ImageCard = ({ data }: { data: Project }) => (
-    data.liveUrl ? (<a href={data.liveUrl}><img src={data.cover} alt={data.title} /></a>) : (<img src={data.cover} alt={data.title} />)
-)
+const ImageCard = ({ data }: { data: Project }) => {
+    if (!data.cover) return null
+
+    return data.liveUrl
+        ? <a className="card__image" href={data.liveUrl}><img src={data.cover} alt={data.title} /></a>
+        : <div className="card__image"><img src={data.cover} alt={data.title} /></div>
+}
 
 
 const ProjectCard = ({ data }: { data: Project }) => {
-    return (<div className="card grid__items">
-        {!data.isSmallProject && <ImageCard data={data} />} 
+    const hasImage = !data.isSmallProject && Boolean(data.cover)
+
+    return (<div className={`card grid__items ${hasImage ? 'card--with-image' : 'card--without-image'}`}>
+        {hasImage && <ImageCard data={data} />}
         <h3 className="card__title">
             {data.skills.map((skill, index) => <span key={index}>{skill}</span> )}
         </h3>

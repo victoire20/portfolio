@@ -47,7 +47,15 @@ type CreatedProject = {
 
 type RelationGroup = {
   table: 'project_skills' | 'project_targets' | 'project_project_types'
-  rows: Record<string, CatalogItem['id']>[]
+  rows: {
+    project_id: CatalogItem['id']
+    relation_id: CatalogItem['id']
+  }[]
+}
+
+type ProjectRelationRecord = {
+  id: CatalogItem['id']
+  relationId: CatalogItem['id']
 }
 
 function projectPayload(input: CreateProjectInput) {
@@ -97,17 +105,17 @@ export default async function createProject(input: CreateProjectInput) {
   const relationGroups: RelationGroup[] = [
     {
       table: 'project_skills',
-      rows: input.skillIds.map((skillId) => ({ project_id: projectId, skill_id: skillId })),
+      rows: input.skillIds.map((skillId) => ({ project_id: projectId, relation_id: skillId })),
     },
     {
       table: 'project_targets',
-      rows: input.targetIds.map((targetId) => ({ project_id: projectId, target_id: targetId })),
+      rows: input.targetIds.map((targetId) => ({ project_id: projectId, relation_id: targetId })),
     },
     {
       table: 'project_project_types',
       rows: input.projectTypeIds.map((projectTypeId) => ({
         project_id: projectId,
-        project_type_id: projectTypeId,
+        relation_id: projectTypeId,
       })),
     },
   ]
@@ -147,7 +155,7 @@ export async function updateProject(
   if (!data) throw new Error('No matching project was updated.')
 
   try {
-    await replaceProjectRelations(project.id, input)
+    await syncProjectRelations(project.id, input)
   } catch (relationError) {
     const cleanupErrors: string[] = []
     try {
@@ -161,7 +169,7 @@ export async function updateProject(
     }
 
     try {
-      await replaceProjectRelations(project.id, projectToInput(project))
+      await syncProjectRelations(project.id, projectToInput(project))
     } catch (rollbackError) {
       cleanupErrors.push(`relations: ${getErrorMessage(rollbackError)}`)
     }
@@ -226,13 +234,41 @@ export function getNextProjectStatus(status: ProjectStatus): ProjectStatus {
   return status === 'Done' ? 'In progress' : 'Done'
 }
 
-async function replaceProjectRelations(projectId: CatalogItem['id'], input: CreateProjectInput) {
-  await clearProjectRelations(projectId)
-  const groups = getRelationGroups(projectId, input)
-  for (const group of groups) {
-    if (group.rows.length === 0) continue
-    const { error } = await insertRelation(group)
-    if (error) throw new Error(error.message)
+async function syncProjectRelations(projectId: CatalogItem['id'], input: CreateProjectInput) {
+  const { supabase } = await import('../utils/supabase')
+
+  for (const group of getRelationGroups(projectId, input)) {
+    const existing = await loadProjectRelations(group, projectId)
+    const desiredRows = [...new Map(
+      group.rows.map((row) => [String(row.relation_id), row]),
+    ).values()]
+    const desiredIds = new Set(desiredRows.map((row) => String(row.relation_id)))
+    const retainedIds = new Set<string>()
+    const duplicateOrRemovedRowIds: CatalogItem['id'][] = []
+
+    for (const row of existing) {
+      const relationKey = String(row.relationId)
+      if (!desiredIds.has(relationKey) || retainedIds.has(relationKey)) {
+        duplicateOrRemovedRowIds.push(row.id)
+      } else {
+        retainedIds.add(relationKey)
+      }
+    }
+
+    if (duplicateOrRemovedRowIds.length > 0) {
+      const { error } = await supabase
+        .from(group.table)
+        .delete()
+        .eq('project_id', projectId)
+        .in('id', duplicateOrRemovedRowIds)
+      if (error) throw new Error(error.message)
+    }
+
+    const additions = desiredRows.filter((row) => !retainedIds.has(String(row.relation_id)))
+    if (additions.length > 0) {
+      const { error } = await insertRelation(group, additions)
+      if (error) throw new Error(error.message)
+    }
   }
 }
 
@@ -249,7 +285,7 @@ async function clearProjectRelations(projectId: CatalogItem['id']) {
 
 async function restoreRelationsAfterDelete(projectId: CatalogItem['id'], input: CreateProjectInput) {
   try {
-    await replaceProjectRelations(projectId, input)
+    await syncProjectRelations(projectId, input)
     return ''
   } catch (error) {
     return ` Rollback was incomplete: ${getErrorMessage(error)}.`
@@ -260,17 +296,17 @@ function getRelationGroups(projectId: CatalogItem['id'], input: CreateProjectInp
   return [
     {
       table: 'project_skills',
-      rows: input.skillIds.map((skillId) => ({ project_id: projectId, skill_id: skillId })),
+      rows: input.skillIds.map((skillId) => ({ project_id: projectId, relation_id: skillId })),
     },
     {
       table: 'project_targets',
-      rows: input.targetIds.map((targetId) => ({ project_id: projectId, target_id: targetId })),
+      rows: input.targetIds.map((targetId) => ({ project_id: projectId, relation_id: targetId })),
     },
     {
       table: 'project_project_types',
       rows: input.projectTypeIds.map((projectTypeId) => ({
         project_id: projectId,
-        project_type_id: projectTypeId,
+        relation_id: projectTypeId,
       })),
     },
   ]
@@ -280,15 +316,77 @@ function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : 'An unexpected database error occurred.'
 }
 
-async function insertRelation(group: RelationGroup) {
+async function loadProjectRelations(
+  group: RelationGroup,
+  projectId: CatalogItem['id'],
+): Promise<ProjectRelationRecord[]> {
+  const { supabase } = await import('../utils/supabase')
+  switch (group.table) {
+    case 'project_skills': {
+      const { data, error } = await supabase
+        .from('project_skills')
+        .select('id, skill_id')
+        .eq('project_id', projectId)
+        .overrideTypes<{ id: unknown; skill_id: unknown }[]>()
+      if (error) throw new Error(error.message)
+      return (data ?? []).map((row) => mapProjectRelation(row.id, row.skill_id, group.table))
+    }
+    case 'project_targets': {
+      const { data, error } = await supabase
+        .from('project_targets')
+        .select('id, target_id')
+        .eq('project_id', projectId)
+        .overrideTypes<{ id: unknown; target_id: unknown }[]>()
+      if (error) throw new Error(error.message)
+      return (data ?? []).map((row) => mapProjectRelation(row.id, row.target_id, group.table))
+    }
+    case 'project_project_types': {
+      const { data, error } = await supabase
+        .from('project_project_types')
+        .select('id, project_type_id')
+        .eq('project_id', projectId)
+        .overrideTypes<{ id: unknown; project_type_id: unknown }[]>()
+      if (error) throw new Error(error.message)
+      return (data ?? []).map((row) => mapProjectRelation(row.id, row.project_type_id, group.table))
+    }
+  }
+}
+
+function mapProjectRelation(
+  id: unknown,
+  relationId: unknown,
+  table: RelationGroup['table'],
+): ProjectRelationRecord {
+  if (
+    (typeof id !== 'number' && typeof id !== 'string')
+    || (typeof relationId !== 'number' && typeof relationId !== 'string')
+  ) {
+    throw new Error(`The ${table} table contains an invalid relation.`)
+  }
+  return { id, relationId }
+}
+
+async function insertRelation(
+  group: RelationGroup,
+  rows: RelationGroup['rows'] = group.rows,
+) {
   const { supabase } = await import('../utils/supabase')
   switch (group.table) {
     case 'project_skills':
-      return supabase.from('project_skills').insert(group.rows)
+      return supabase.from('project_skills').insert(rows.map(({ project_id, relation_id }) => ({
+        project_id,
+        skill_id: relation_id,
+      })))
     case 'project_targets':
-      return supabase.from('project_targets').insert(group.rows)
+      return supabase.from('project_targets').insert(rows.map(({ project_id, relation_id }) => ({
+        project_id,
+        target_id: relation_id,
+      })))
     case 'project_project_types':
-      return supabase.from('project_project_types').insert(group.rows)
+      return supabase.from('project_project_types').insert(rows.map(({ project_id, relation_id }) => ({
+        project_id,
+        project_type_id: relation_id,
+      })))
   }
 }
 

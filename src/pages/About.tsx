@@ -4,12 +4,16 @@ import ImgAbout from '../assets/profile.png'
 
 import AboutSection from '../components/sections/AboutSection'
 import PageHeaderSection from '../components/sections/PageHeaderSection'
+import ProjectSection from '../components/sections/ProjectSection'
+import ProjectCard from '../components/card/ProjectCard'
+import usePublicProjects from '../hooks/usePublicProjects'
 import useActiveSkills from '../hooks/useActiveSkills'
 import useFunFacts from '../hooks/useFunFacts'
 import { skillCategoryFallbacks, skillCategoryTranslationKeys } from '../types/skill'
 
 export default function About() {
     const { t, i18n } = useTranslation()
+    const { projects, loading: projectsLoading, error: projectsError } = usePublicProjects(i18n.language)
     const { groups, loading, error } = useActiveSkills()
     const { facts, loading: funFactsLoading, error: funFactsError } = useFunFacts(i18n.language)
     const aboutSkillTypes = ['languages', 'other', 'tools', 'databases', 'frameworks']
@@ -34,6 +38,21 @@ export default function About() {
                     </div>
                 </div>
             </AboutSection>
+
+            <ProjectSection
+                id="about-projects"
+                className="row"
+                title={t('home.projects_title')}
+                hasBar={true}
+                hasMoreBtn={false}
+            >
+                {projectsError && <p role="alert">Could not load projects: {projectsError}</p>}
+                {projectsLoading && <p role="status">Loading projects…</p>}
+                {!projectsLoading && !projectsError && projects
+                    .filter((project) => !project.isSmallProject)
+                    .slice(0, 3)
+                    .map((project) => <ProjectCard key={project.id} data={project} />)}
+            </ProjectSection>
 
             <section className="row about-skills">
                 <div className="section__title">
